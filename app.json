@@ -1,0 +1,6 @@
+{
+  "name": "Chord coach",
+  "description": "Coach for jazz",
+  "repository": "https://github.com/alne4294/chord-coach",
+  "keywords": ["angular2", "express", "node", "midi", "jazz"]
+}

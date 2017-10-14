@@ -1,0 +1,53 @@
+<h2>Random Chords</h2>
+
+<ngb-alert type="light" [dismissible]="false">
+    Select your options and press start!
+</ngb-alert>
+
+<ngb-accordion #acc="ngbAccordion" activeIds="">
+  <ngb-panel title="Chord Options">
+    <ng-template ngbPanelContent>
+        <div>
+          <div class="random-chord-selector">
+            Root Note:
+            <ss-multiselect-dropdown [options]="selectedChords" [(ngModel)]="chordOptionsModel" (ngModelChange)="chordChanged($event)" [settings]="multiAnswerSettings"></ss-multiselect-dropdown>
+          </div>
+
+          <div class="random-chord-selector">
+            Quality:
+            <ss-multiselect-dropdown [options]="selectedQuality" [(ngModel)]="qualityOptionsModel" (ngModelChange)="qualityChanged($event)" [settings]="multiAnswerSettings"></ss-multiselect-dropdown>
+          </div>
+        </div>
+    </ng-template>
+  </ngb-panel>
+  <ngb-panel title="Metronome Options">
+    <ng-template ngbPanelContent>
+      <div id="controls">
+
+        <div class="random-chord-selector" id="tempoBox">Tempo: <span id="showTempo">{{tempo}}</span> BPM <input name="ram" type="range" min="30.0" max="180.0" step="1"  [(ngModel)]="tempo"></div>
+        
+        <div>
+          <div class="random-chord-selector">
+            Beats:
+            <ss-multiselect-dropdown [options]="selectedBeat" [(ngModel)]="beatOptionsModel" (ngModelChange)="beatChanged($event)" [settings]="singleAnswerSettings"></ss-multiselect-dropdown>
+          </div>
+
+            <div class="random-chord-selector">
+              Measures Between Chord Change:
+              <ss-multiselect-dropdown [options]="selectedMeasureInterval" [(ngModel)]="measureIntervalOptionsModel" (ngModelChange)="measureIntervalChanged($event)" [settings]="singleAnswerSettings"></ss-multiselect-dropdown>
+              <span>{{measureIntervalCounter}}/{{measureInterval}}</span>
+            </div>
+        </div>
+      </div>
+    </ng-template>
+  </ngb-panel>
+</ngb-accordion>
+
+<br>
+
+<div><button id="startstop-button" class="btn btn-primary" (click)="play()">{{startStopMessage}}</button></div>
+
+<div class="chord-display">
+  <div class="chord current-chord">{{currentChord}}</div>
+  <div class="chord next-chord">{{nextChord}}</div>
+</div>

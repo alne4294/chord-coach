@@ -1,0 +1,29 @@
+.random-chord-selector {
+  margin: 10px;
+}
+
+.chord-display {
+  margin-top: 10px;
+}
+
+.chord{
+  display: inline-block;
+}
+
+.current-chord{
+  color: black;
+  font-size: 4rem;
+  font-weight: 500;
+  height: 100px;
+  width: 300px;
+  text-align: center;
+  background: rgba(211, 211, 211, 0.25);
+}
+
+.next-chord{
+  margin-left: 10px;
+  color: gray;
+  font-size: 3rem;
+  width: 290px;
+  text-align: center;
+}
