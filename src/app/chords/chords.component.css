@@ -2,6 +2,10 @@
   margin: 10px;
 }
 
+.tempo-slider {
+  width: 100%;
+}
+
 .chord-display {
   margin-top: 10px;
 }

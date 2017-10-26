@@ -24,7 +24,10 @@
     <ng-template ngbPanelContent>
       <div id="controls">
 
-        <div class="random-chord-selector" id="tempoBox">Tempo: <span id="showTempo">{{tempo}}</span> BPM <input name="ram" type="range" min="30.0" max="180.0" step="1"  [(ngModel)]="tempo"></div>
+        <div class="random-chord-selector" id="tempoBox">
+          Tempo: <span id="showTempo">{{tempo}}</span> BPM 
+          <input class="tempo-slider" name="ram" type="range" min="30.0" max="380.0" step="1"  [(ngModel)]="tempo">
+        </div>
         
         <div>
           <div class="random-chord-selector">
