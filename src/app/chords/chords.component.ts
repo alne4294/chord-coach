@@ -265,6 +265,7 @@ export class ChordsComponent implements OnInit {
         qualityKey = this.qualityOptionsModel[Math.floor((Math.random() * this.qualityOptionsModel.length - 1) + 1)];
       }
       newChordKey = rootKey + qualityKey + patternKey;
+      retryCount++;
     }
 
     this.chordCalculator.appendChords(this.chordQueue, patternKey, rootKey, qualityKey, false);

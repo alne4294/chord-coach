@@ -16,8 +16,8 @@ export class ChordCalculatorService {
       id: 0
     },
     1: {
-      name: "A#",
-      altName: ["Bb"],
+      name: "Bb",
+      altName: ["A#"],
       range: [1, 8],
       interval: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0],
       id: 1
