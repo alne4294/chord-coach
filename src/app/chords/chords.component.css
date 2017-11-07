@@ -6,6 +6,11 @@
   width: 100%;
 }
 
+.start-stop-button {
+  width: 250px;
+  height: 42px;
+}
+
 .chord-display {
   margin-top: 10px;
 }
@@ -16,10 +21,12 @@
 
 .current-chord{
   color: black;
-  font-size: 4rem;
+  /*font-size: 4rem;*/
+  font-size: 3rem;
   font-weight: 500;
   height: 100px;
-  width: 300px;
+  /*width: 300px;*/
+  width: 290px;
   text-align: center;
   background: rgba(211, 211, 211, 0.25);
 }

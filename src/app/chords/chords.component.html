@@ -14,8 +14,25 @@
           </div>
 
           <div class="random-chord-selector">
-            Quality:
+            Chord Pattern:
+            <ss-multiselect-dropdown [options]="selectedChordPattern" [(ngModel)]="chordPatternsModel" (ngModelChange)="qualityChanged($event)" [settings]="multiAnswerSettings"></ss-multiselect-dropdown>
+          </div>
+
+          <div class="random-chord-selector">
+            Quality of single chords:
             <ss-multiselect-dropdown [options]="selectedQuality" [(ngModel)]="qualityOptionsModel" (ngModelChange)="qualityChanged($event)" [settings]="multiAnswerSettings"></ss-multiselect-dropdown>
+          </div>
+
+          <div class="random-chord-selector">
+            Use enharmonic chord names: FALSE
+          </div>
+
+          <div class="random-chord-selector">
+            Number of chords shown:
+            <div class="random-chord-selector" id="chordPreviewBox">
+              <span id="chordPreviewCount">{{chordPreviewCount}}</span>
+              <input class="preview-count-slider" name="ram" type="range" min="1.0" max="20.0" step="1"  [(ngModel)]="chordPreviewCount">
+            </div>
           </div>
         </div>
     </ng-template>
@@ -25,10 +42,10 @@
       <div id="controls">
 
         <div class="random-chord-selector" id="tempoBox">
-          Tempo: <span id="showTempo">{{tempo}}</span> BPM 
+          Tempo: <span id="showTempo">{{tempo}}</span> BPM
           <input class="tempo-slider" name="ram" type="range" min="30.0" max="380.0" step="1"  [(ngModel)]="tempo">
         </div>
-        
+
         <div>
           <div class="random-chord-selector">
             Beats:
@@ -48,9 +65,13 @@
 
 <br>
 
-<div><button id="startstop-button" class="btn btn-primary" (click)="play()">{{startStopMessage}}</button></div>
+<div><button id="startstop-button" class="btn btn-primary start-stop-button" (click)="play()">{{startStopMessage}}</button></div>
 
 <div class="chord-display">
-  <div class="chord current-chord">{{currentChord}}</div>
-  <div class="chord next-chord">{{nextChord}}</div>
+  <div *ngFor="let currentChord of chordQueue" class="chord current-chord">{{ currentChord }}</div>
 </div>
+
+<!--<div class="chord-display">-->
+  <!--<div class="chord current-chord">{{currentChord}}</div>-->
+  <!--<div class="chord next-chord">{{nextChord}}</div>-->
+<!--</div>-->

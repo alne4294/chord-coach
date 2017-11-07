@@ -9,6 +9,7 @@ import { SharedModule } from '../shared/shared.module';
 import { RouterModule } from '@angular/router';
 import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect';
 
+import { ChordCalculatorService } from './chordCalculator.service';
 import { WindowRefService } from './windowRefService.service';
 
 
@@ -27,7 +28,8 @@ import { WindowRefService } from './windowRefService.service';
     ChordsComponent
   ],
   providers: [
-    WindowRefService 
+    WindowRefService,
+    ChordCalculatorService
   ],
   bootstrap: [
     ChordsComponent
