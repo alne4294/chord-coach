@@ -220,9 +220,7 @@ export class ChordCalculatorService {
   }
 
   appendChordPattern(chordQueue: Array<string>, patternKey: string, rootKey: string): void {
-    debugger;
     for (let chord of this.chordPattern[patternKey].pattern) {
-      debugger;
       let rootOfNextChord = this.noteInfo[this.noteInfo[rootKey].interval[chord.halfStepsFromRoot]].name;
       let qualityOfNextChord = this.chordQuality[chord.quality].name;
       chordQueue.push(rootOfNextChord + " " + qualityOfNextChord);
