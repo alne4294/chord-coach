@@ -159,6 +159,10 @@ export class ChordCalculatorService {
         {
           halfStepsFromRoot: '0',
           quality: 'ma7'
+        },
+        {
+          halfStepsFromRoot: '0',
+          quality: 'ma7'
         }
       ]
     },
@@ -185,6 +189,10 @@ export class ChordCalculatorService {
         {
           halfStepsFromRoot: '7',
           quality: '7'
+        },
+        {
+          halfStepsFromRoot: '0',
+          quality: 'mi7'
         },
         {
           halfStepsFromRoot: '0',
