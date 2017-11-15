@@ -7,6 +7,7 @@
 }
 
 .start-stop-button {
+  margin-top: 10px;
   width: 250px;
   height: 42px;
 }
@@ -22,19 +23,19 @@
 .current-chord {
   color: black;
   /*font-size: 4rem;*/
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: 500;
-  height: 70px;
+  height: 80px;
   /*width: 300px;*/
-  width: 105px;
+  width: 146px;
   text-align: center;
   background: rgba(211, 211, 211, 0.25);
   padding-top: 21px;
-  border: 1px solid #000;
+  border: 1px solid #868e96;
 }
 
 .last-chord-in-group {
-  border-right: 6px solid #000;
+  border-right: 5px solid #000;
 }
 
 .next-chord {
@@ -43,4 +44,24 @@
   font-size: 3rem;
   width: 290px;
   text-align: center;
+}
+
+@media screen and (max-width:680px) {
+  .current-chord {
+    color: black;
+    font-size: 1rem;
+    font-weight: 400;
+    height: 62px;
+    width: 68px;
+    text-align: center;
+    width: 80px;
+    padding-top: 21px;
+    border: .3px solid #868e96ab;
+  }
+  .last-chord-in-group {
+    border-right: 3px solid #000;
+  }
+  h2 {
+    font-size: 1.5rem;
+  }
 }

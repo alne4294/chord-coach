@@ -1,6 +1,6 @@
 <h2>Random Chords</h2>
 
-<ngb-alert type="light" [dismissible]="false">
+<ngb-alert *ngIf="showInfoAlert" type="light" [dismissible]="false">
     Select your options and press start!
 </ngb-alert>
 
@@ -22,10 +22,6 @@
             Quality of single chords:
             <ss-multiselect-dropdown [options]="selectedQuality" [(ngModel)]="qualityOptionsModel" (ngModelChange)="qualityChanged($event)" [settings]="multiAnswerSettings"></ss-multiselect-dropdown>
           </div>
-
-          <!--<div class="random-chord-selector">-->
-            <!--Use enharmonic chord names: FALSE-->
-          <!--</div>-->
 
           <div class="random-chord-selector">
             Number of chords shown:
@@ -62,8 +58,6 @@
     </ng-template>
   </ngb-panel>
 </ngb-accordion>
-
-<br>
 
 <div><button id="startstop-button" class="btn btn-primary start-stop-button" (click)="play()">{{startStopMessage}}</button></div>
 

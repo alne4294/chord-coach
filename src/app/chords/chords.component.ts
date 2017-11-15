@@ -175,6 +175,8 @@ export class ChordsComponent implements OnInit {
   measureIntervalCounter: number;
   latestChordKey: string;
 
+  showInfoAlert: boolean;
+
   constructor(public fb: FormBuilder, private _metronomeWebWorker: MetronomeWebWorker, windowRef: WindowRefService, private _chordCalculator: ChordCalculatorService) {
 
     this._window = windowRef.nativeWindow;
@@ -217,6 +219,8 @@ export class ChordsComponent implements OnInit {
     this.chordCalculator = _chordCalculator;
 
     this.chordQueue = [];
+
+    this.showInfoAlert = true;
 
     let self = this;
     this.timerWorker.setOnMessageCallback(function (message) {
@@ -285,6 +289,8 @@ export class ChordsComponent implements OnInit {
   }
 
   play(): void {
+    this.showInfoAlert = false;
+    
     this.isPlaying = !this.isPlaying;
 
     if (this.isPlaying) { // start playing
