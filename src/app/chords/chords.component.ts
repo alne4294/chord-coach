@@ -84,18 +84,18 @@ export class ChordsComponent implements OnInit {
     this.chordPatternsModel = ['singleChord'];
 
     this.selectedChords = [
-      {id: 0, name: this.chordCalculator.noteInfo[0].name},
-      {id: 1, name: this.chordCalculator.noteInfo[1].name},
-      {id: 2, name: this.chordCalculator.noteInfo[2].name},
-      {id: 3, name: this.chordCalculator.noteInfo[3].name},
-      {id: 4, name: this.chordCalculator.noteInfo[4].name},
-      {id: 5, name: this.chordCalculator.noteInfo[5].name},
-      {id: 6, name: this.chordCalculator.noteInfo[6].name},
-      {id: 7, name: this.chordCalculator.noteInfo[7].name},
-      {id: 8, name: this.chordCalculator.noteInfo[8].name},
-      {id: 9, name: this.chordCalculator.noteInfo[9].name},
-      {id: 10, name: this.chordCalculator.noteInfo[10].name},
-      {id: 11, name: this.chordCalculator.noteInfo[11].name}
+      {id: 0, name: this.chordCalculator.noteInfo[0].menuName},
+      {id: 1, name: this.chordCalculator.noteInfo[1].menuName},
+      {id: 2, name: this.chordCalculator.noteInfo[2].menuName},
+      {id: 3, name: this.chordCalculator.noteInfo[3].menuName},
+      {id: 4, name: this.chordCalculator.noteInfo[4].menuName},
+      {id: 5, name: this.chordCalculator.noteInfo[5].menuName},
+      {id: 6, name: this.chordCalculator.noteInfo[6].menuName},
+      {id: 7, name: this.chordCalculator.noteInfo[7].menuName},
+      {id: 8, name: this.chordCalculator.noteInfo[8].menuName},
+      {id: 9, name: this.chordCalculator.noteInfo[9].menuName},
+      {id: 10, name: this.chordCalculator.noteInfo[10].menuName},
+      {id: 11, name: this.chordCalculator.noteInfo[11].menuName}
     ];
 
     this.selectedQuality = [
@@ -149,7 +149,7 @@ export class ChordsComponent implements OnInit {
   }
 
   startStopMessage: string;
-  chordQueue: Array<String>;
+  chordQueue: Array<Object>;
 
   isPlaying: boolean;
   currentBeat: number;
@@ -197,7 +197,7 @@ export class ChordsComponent implements OnInit {
     this.startTime;              // The start time of the entire sequence.
     this.currentBeat = 0;        // What note is currently last scheduled?
     this.tempo = 120;          // tempo (in beats per minute)
-    this.chordPreviewCount = 8;
+    this.chordPreviewCount = 40;
     this.lookahead = 25.0;       // How frequently to call scheduling function (in milliseconds)
     this.startStopMessage = "Start";
     this.scheduleAheadTime = 0.1;
@@ -268,7 +268,7 @@ export class ChordsComponent implements OnInit {
       retryCount++;
     }
 
-    this.chordCalculator.appendChords(this.chordQueue, patternKey, rootKey, qualityKey, false);
+    this.chordCalculator.appendChords(this.chordQueue, patternKey, rootKey, qualityKey);
     this.latestChordKey = newChordKey;
   }
 

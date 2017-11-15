@@ -31,7 +31,7 @@
             Number of chords shown:
             <div class="random-chord-selector" id="chordPreviewBox">
               <span id="chordPreviewCount">{{chordPreviewCount}}</span>
-              <input class="preview-count-slider" name="ram" type="range" min="1.0" max="20.0" step="1"  [(ngModel)]="chordPreviewCount">
+              <input class="preview-count-slider" name="ram" type="range" min="1.0" max="120.0" step="1"  [(ngModel)]="chordPreviewCount">
             </div>
           </div>
         </div>
@@ -68,10 +68,7 @@
 <div><button id="startstop-button" class="btn btn-primary start-stop-button" (click)="play()">{{startStopMessage}}</button></div>
 
 <div class="chord-display">
-  <div *ngFor="let currentChord of chordQueue" class="chord current-chord">{{ currentChord }}</div>
+  <div *ngFor="let currentChord of chordQueue" 
+    class="chord current-chord" 
+    [ngClass]="{'last-chord-in-group' : currentChord.isLastInGroup}">{{ currentChord.name }}</div>
 </div>
-
-<!--<div class="chord-display">-->
-  <!--<div class="chord current-chord">{{currentChord}}</div>-->
-  <!--<div class="chord next-chord">{{nextChord}}</div>-->
-<!--</div>-->

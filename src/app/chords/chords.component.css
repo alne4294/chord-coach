@@ -19,19 +19,25 @@
   display: inline-block;
 }
 
-.current-chord{
+.current-chord {
   color: black;
   /*font-size: 4rem;*/
-  font-size: 3rem;
+  font-size: 1.2rem;
   font-weight: 500;
-  height: 100px;
+  height: 70px;
   /*width: 300px;*/
-  width: 290px;
+  width: 105px;
   text-align: center;
   background: rgba(211, 211, 211, 0.25);
+  padding-top: 21px;
+  border: 1px solid #000;
 }
 
-.next-chord{
+.last-chord-in-group {
+  border-right: 6px solid #000;
+}
+
+.next-chord {
   margin-left: 10px;
   color: gray;
   font-size: 3rem;
