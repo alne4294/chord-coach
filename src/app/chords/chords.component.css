@@ -6,10 +6,13 @@
   width: 100%;
 }
 
+.preview-count-slider {
+  width: 100%;
+}
+
 .start-stop-button {
-  margin-top: 10px;
-  width: 250px;
-  height: 42px;
+  width: 180px;
+  height: 36px;
 }
 
 .chord-display {
@@ -34,6 +37,10 @@
   border: 1px solid #868e96;
 }
 
+.highlighted-chord {
+  background-color: #FBF987;
+}
+
 .last-chord-in-group {
   border-right: 5px solid #000;
 }
@@ -44,6 +51,24 @@
   font-size: 3rem;
   width: 290px;
   text-align: center;
+}
+
+.chords-main {
+  margin-bottom:50px;
+}
+
+.fixed-footer {
+  position: fixed;
+  height: 50px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  margin-bottom: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px -3px 7px -2px #999;
+  background: rgba(211,211,211,0.7);
 }
 
 @media screen and (max-width:680px) {

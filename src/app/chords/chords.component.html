@@ -1,10 +1,11 @@
+<div class="chords-main">
 <h2>Random Chords</h2>
 
 <ngb-alert *ngIf="showInfoAlert" type="light" [dismissible]="false">
     Select your options and press start!
 </ngb-alert>
 
-<ngb-accordion #acc="ngbAccordion" activeIds="">
+<ngb-accordion *ngIf="!isPlaying" #acc="ngbAccordion" activeIds="">
   <ngb-panel title="Chord Options">
     <ng-template ngbPanelContent>
         <div>
@@ -24,12 +25,12 @@
           </div>
 
           <div class="random-chord-selector">
-            Number of chords shown:
             <div class="random-chord-selector" id="chordPreviewBox">
-              <span id="chordPreviewCount">{{chordPreviewCount}}</span>
+              Number of chords shown: <span id="chordPreviewCount">{{chordPreviewCount}}</span>
               <input class="preview-count-slider" name="ram" type="range" min="1.0" max="120.0" step="1"  [(ngModel)]="chordPreviewCount">
             </div>
           </div>
+
         </div>
     </ng-template>
   </ngb-panel>
@@ -59,10 +60,13 @@
   </ngb-panel>
 </ngb-accordion>
 
-<div><button id="startstop-button" class="btn btn-primary start-stop-button" (click)="play()">{{startStopMessage}}</button></div>
-
 <div class="chord-display">
-  <div *ngFor="let currentChord of chordQueue" 
-    class="chord current-chord" 
-    [ngClass]="{'last-chord-in-group' : currentChord.isLastInGroup}">{{ currentChord.name }}</div>
+  <div *ngFor="let currentChord of chordQueue; let idx = index"
+    class="chord current-chord"
+    [ngClass]="{'last-chord-in-group': currentChord.isLastInGroup, 'highlighted-chord': idx===currentChordIndex}">{{ currentChord.name }}</div>
+</div>
+
+<div class="fixed-footer">
+  <div><button id="startstop-button" class="btn btn-primary start-stop-button" (click)="play()">{{startStopMessage}}</button></div>
+</div>
 </div>

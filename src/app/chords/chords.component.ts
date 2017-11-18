@@ -175,6 +175,7 @@ export class ChordsComponent implements OnInit {
   measureIntervalCounter: number;
   latestChordKey: string;
 
+  currentChordIndex: number;
   showInfoAlert: boolean;
 
   constructor(public fb: FormBuilder, private _metronomeWebWorker: MetronomeWebWorker, windowRef: WindowRefService, private _chordCalculator: ChordCalculatorService) {
@@ -220,6 +221,7 @@ export class ChordsComponent implements OnInit {
 
     this.chordQueue = [];
 
+    this.currentChordIndex = 0;
     this.showInfoAlert = true;
 
     let self = this;
@@ -281,6 +283,7 @@ export class ChordsComponent implements OnInit {
   }
 
   initializeChordQueue() {
+    this.currentChordIndex = 0;
     this.clearChordQueue();
     this.addRandomChordsFromSelections();
     while(this.chordQueue.length < this.chordPreviewCount) {
@@ -290,7 +293,7 @@ export class ChordsComponent implements OnInit {
 
   play(): void {
     this.showInfoAlert = false;
-    
+
     this.isPlaying = !this.isPlaying;
 
     if (this.isPlaying) { // start playing
@@ -340,7 +343,14 @@ export class ChordsComponent implements OnInit {
       osc.frequency.duration = 1.0;
 
       if (this.measureIntervalCounter >= this.measureInterval) {
-        this.chordQueue.shift(); // Toss the first chord
+        //this.chordQueue.shift(); // Toss the first chord
+        if (this.currentChordIndex === (this.chordQueue.length-1)) {
+          // we've ran out of chords...
+          this.initializeChordQueue();
+        } else {
+          this.currentChordIndex++;
+        }
+
         this.addRandomChordsFromSelections();
         this.measureIntervalCounter = 0;
       }
