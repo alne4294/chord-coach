@@ -10,9 +10,12 @@
   width: 100%;
 }
 
-.start-stop-button {
-  width: 180px;
+.control-button {
+  width: 140px;
   height: 36px;
+  margin: 5px;
+  background-color: #035eb6;
+  border-color: #035eb6;
 }
 
 .chord-display {

@@ -300,6 +300,8 @@ export class ChordCalculatorService {
     }
   };
 
+  repeatChordName = "%";
+
   chordPattern = {
     singleChord: {
       name: "Single Chord",
@@ -413,7 +415,7 @@ export class ChordCalculatorService {
     let qualityName = this.chordQuality[qualityKey].name;
     let scaleQualityKey = Math.floor((Math.random() * this.chordQuality[qualityKey].supportedScales.length - 1) + 1);
     let scaleQuality = this.chordQuality[qualityKey].supportedScales[scaleQualityKey];
-    
+
     // Get chord name
     let sharpOrFlat = this.getSharpOrFlatForScaleQuality(scaleQuality, rootKey);
     let rootName = this.noteInfo[rootKey].name[sharpOrFlat];
@@ -425,14 +427,20 @@ export class ChordCalculatorService {
     let scaleQuality = this.chordPattern[patternKey].scaleQuality;
     let sharpOrFlat = this.getSharpOrFlatForScaleQuality(scaleQuality, rootKey);
 
+    let previousChordAndQuality = "";
     let counter = 1;
     for (let chord of this.chordPattern[patternKey].pattern) {
       let rootOfNextChord = this.noteInfo[this.noteInfo[rootKey].interval[chord.halfStepsFromRoot]].name[sharpOrFlat];
       let qualityOfNextChord = this.chordQuality[chord.quality].name;
 
       let isLastInGroup = (counter === this.chordPattern[patternKey].pattern.length);
-      
-      chordQueue.push({isLastInGroup: isLastInGroup, name: rootOfNextChord + " " + qualityOfNextChord});
+
+      let fullName = rootOfNextChord + " " + qualityOfNextChord;
+      if (fullName === previousChordAndQuality) {
+        fullName = this.repeatChordName;
+      }
+      previousChordAndQuality = fullName;
+      chordQueue.push({isLastInGroup: isLastInGroup, name: fullName});
       counter ++;
     }
   }

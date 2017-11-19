@@ -81,7 +81,7 @@ export class ChordsComponent implements OnInit {
   ngOnInit() {
     this.chordOptionsModel = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
     this.qualityOptionsModel = ['dim7', 'mi7', 'mi7b5', 'ma7', '7'];
-    this.chordPatternsModel = ['singleChord'];
+    this.chordPatternsModel = ['singleChord', 'major25', 'minor25', 'major251', 'minor251'];
 
     this.selectedChords = [
       {id: 0, name: this.chordCalculator.noteInfo[0].menuName},
@@ -202,7 +202,7 @@ export class ChordsComponent implements OnInit {
     this.tempo = 120;          // tempo (in beats per minute)
     this.chordPreviewCount = 40;
     this.lookahead = 25.0;       // How frequently to call scheduling function (in milliseconds)
-    this.startStopMessage = "Start";
+    this.startStopMessage = "Play";
     this.scheduleAheadTime = 0.1;
     this.nextNoteTime = 0.0;     // when the next note is due.
     this.noteResolution = 2;     // 0 == 16th, 1 == 8th, 2 == quarter note
@@ -279,34 +279,38 @@ export class ChordsComponent implements OnInit {
   }
 
   clearChordQueue() {
+    this.currentChordIndex = 0;
     this.chordQueue = [];
   }
 
-  initializeChordQueue() {
-    this.currentChordIndex = 0;
-    this.clearChordQueue();
+  populateChordQueue() {
     this.addRandomChordsFromSelections();
     while(this.chordQueue.length < this.chordPreviewCount) {
       this.addRandomChordsFromSelections();
     }
   }
 
-  play(): void {
+  playpause(): void {
     this.showInfoAlert = false;
 
     this.isPlaying = !this.isPlaying;
 
     if (this.isPlaying) { // start playing
-      this.initializeChordQueue();
+      this.populateChordQueue();
       this.currentBeat = 0;
       this.measureIntervalCounter = 0;
       this.nextNoteTime = this.audioContext.currentTime;
-      this.startStopMessage = "Stop";
+      this.startStopMessage = "Pause";
       this.timerWorker.postMessage("start");
     } else {
-      this.startStopMessage = "Start";
+      this.startStopMessage = "Play";
       this.timerWorker.postMessage("stop");
     }
+  }
+
+  scramble(): void {
+    this.clearChordQueue();
+    this.populateChordQueue();
   }
 
   nextNote(): void {
@@ -346,7 +350,8 @@ export class ChordsComponent implements OnInit {
         //this.chordQueue.shift(); // Toss the first chord
         if (this.currentChordIndex === (this.chordQueue.length-1)) {
           // we've ran out of chords...
-          this.initializeChordQueue();
+          this.clearChordQueue();
+          this.populateChordQueue();
         } else {
           this.currentChordIndex++;
         }

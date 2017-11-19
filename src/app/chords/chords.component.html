@@ -2,7 +2,7 @@
 <h2>Random Chords</h2>
 
 <ngb-alert *ngIf="showInfoAlert" type="light" [dismissible]="false">
-    Select your options and press start!
+    Select your options and press play!
 </ngb-alert>
 
 <ngb-accordion *ngIf="!isPlaying" #acc="ngbAccordion" activeIds="">
@@ -67,6 +67,7 @@
 </div>
 
 <div class="fixed-footer">
-  <div><button id="startstop-button" class="btn btn-primary start-stop-button" (click)="play()">{{startStopMessage}}</button></div>
+  <div><button id="startstop-button" class="btn btn-primary control-button" (click)="playpause()">{{startStopMessage}}</button></div>
+  <div><button id="scramble" class="btn btn-primary control-button" (click)="scramble()">Scramble</button></div>
 </div>
 </div>
