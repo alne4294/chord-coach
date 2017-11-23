@@ -179,7 +179,7 @@ export class ChordCalculatorService {
       root: 11,
       sharpOrFlat: 'both'
     }
-  }
+  };
 
   majorCircleOfFifthRoots = {
     0: {
@@ -230,7 +230,7 @@ export class ChordCalculatorService {
       root: 11,
       sharpOrFlat: 'flat'
     }
-  }
+  };
 
   intervals = {
     0: {
@@ -258,7 +258,7 @@ export class ChordCalculatorService {
   intervalNameDict = {
     ENHARMONIC: 0,
     PERFECT_FIFTH: 7
-  }
+  };
 
   chordQuality = {
     dim7: {

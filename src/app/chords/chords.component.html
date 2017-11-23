@@ -11,23 +11,23 @@
         <div>
           <div class="random-chord-selector">
             Root Note:
-            <ss-multiselect-dropdown [options]="selectedChords" [(ngModel)]="chordOptionsModel" (ngModelChange)="chordChanged($event)" [settings]="multiAnswerSettings"></ss-multiselect-dropdown>
+            <ss-multiselect-dropdown [options]="selectedChords" [(ngModel)]="chordOptionsModel" (ngModelChange)="chordOptionsModelChanged($event)" [settings]="multiAnswerSettings"></ss-multiselect-dropdown>
           </div>
 
           <div class="random-chord-selector">
             Chord Pattern:
-            <ss-multiselect-dropdown [options]="selectedChordPattern" [(ngModel)]="chordPatternsModel" (ngModelChange)="qualityChanged($event)" [settings]="multiAnswerSettings"></ss-multiselect-dropdown>
+            <ss-multiselect-dropdown [options]="selectedChordPattern" [(ngModel)]="chordPatternsModel" (ngModelChange)="chordPatternsModelChanged($event)" [settings]="multiAnswerSettings"></ss-multiselect-dropdown>
           </div>
 
           <div class="random-chord-selector">
             Quality of single chords:
-            <ss-multiselect-dropdown [options]="selectedQuality" [(ngModel)]="qualityOptionsModel" (ngModelChange)="qualityChanged($event)" [settings]="multiAnswerSettings"></ss-multiselect-dropdown>
+            <ss-multiselect-dropdown [options]="selectedQuality" [(ngModel)]="qualityOptionsModel" (ngModelChange)="qualityOptionsModelChanged($event)" [settings]="multiAnswerSettings"></ss-multiselect-dropdown>
           </div>
 
           <div class="random-chord-selector">
             <div class="random-chord-selector" id="chordPreviewBox">
               Number of chords shown: <span id="chordPreviewCount">{{chordPreviewCount}}</span>
-              <input class="preview-count-slider" name="ram" type="range" min="1.0" max="120.0" step="1"  [(ngModel)]="chordPreviewCount">
+              <input class="preview-count-slider" name="ram" type="range" min="1.0" max="120.0" step="1"  [(ngModel)]="chordPreviewCount" (ngModelChange)="chordPreviewCountChanged($event)">
             </div>
           </div>
 
@@ -40,18 +40,18 @@
 
         <div class="random-chord-selector" id="tempoBox">
           Tempo: <span id="showTempo">{{tempo}}</span> BPM
-          <input class="tempo-slider" name="ram" type="range" min="30.0" max="380.0" step="1"  [(ngModel)]="tempo">
+          <input class="tempo-slider" name="ram" type="range" min="30.0" max="380.0" step="1"  [(ngModel)]="tempo" (ngModelChange)="tempoChanged($event)">
         </div>
 
         <div>
           <div class="random-chord-selector">
             Beats:
-            <ss-multiselect-dropdown [options]="selectedBeat" [(ngModel)]="beatOptionsModel" (ngModelChange)="beatChanged($event)" [settings]="singleAnswerSettings"></ss-multiselect-dropdown>
+            <ss-multiselect-dropdown [options]="selectedBeat" [(ngModel)]="beatOptionsModel" (ngModelChange)="beatOptionsModelChanged($event)" [settings]="singleAnswerSettings"></ss-multiselect-dropdown>
           </div>
 
             <div class="random-chord-selector">
               Measures Between Chord Change:
-              <ss-multiselect-dropdown [options]="selectedMeasureInterval" [(ngModel)]="measureIntervalOptionsModel" (ngModelChange)="measureIntervalChanged($event)" [settings]="singleAnswerSettings"></ss-multiselect-dropdown>
+              <ss-multiselect-dropdown [options]="selectedMeasureInterval" [(ngModel)]="measureIntervalOptionsModel" (ngModelChange)="measureIntervalOptionsModelChanged($event)" [settings]="singleAnswerSettings"></ss-multiselect-dropdown>
               <span>{{measureIntervalCounter}}/{{measureInterval}}</span>
             </div>
         </div>

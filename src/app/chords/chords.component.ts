@@ -78,10 +78,23 @@ export class ChordsComponent implements OnInit {
     4: '8'
   };
 
+  localStorageOptions = {
+
+  };
+
+  setLocalStorageOption(key: string): void {
+    localStorage.setItem(key, JSON.stringify(this[key]));
+  };
+
+  getLocalStorageOption(key: string, defaultItem : any): any {
+    let localStorageVal = JSON.parse(localStorage.getItem(key));
+    return localStorageVal ? localStorageVal : defaultItem;
+  };
+
   ngOnInit() {
-    this.chordOptionsModel = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-    this.qualityOptionsModel = ['dim7', 'mi7', 'mi7b5', 'ma7', '7'];
-    this.chordPatternsModel = ['singleChord', 'major25', 'minor25', 'major251', 'minor251'];
+    this.chordOptionsModel = this.getLocalStorageOption('chordOptionsModel', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+    this.qualityOptionsModel = this.getLocalStorageOption('qualityOptionsModel', ['dim7', 'mi7', 'mi7b5', 'ma7', '7']);
+    this.chordPatternsModel = this.getLocalStorageOption('chordPatternsModel', ['singleChord', 'major25', 'minor25', 'major251', 'minor251']);
 
     this.selectedChords = [
       {id: 0, name: this.chordCalculator.noteInfo[0].menuName},
@@ -130,20 +143,39 @@ export class ChordsComponent implements OnInit {
     ];
   }
 
-  chordChanged(event: any) {
+  chordOptionsModelChanged(event: any) {
+    this.setLocalStorageOption('chordOptionsModel');
     console.log(this.chordOptionsModel);
   }
 
-  qualityChanged(event: any) {
+  qualityOptionsModelChanged(event: any) {
+    this.setLocalStorageOption('qualityOptionsModel');
     console.log(this.qualityOptionsModel);
   }
 
-  beatChanged(event: any) {
+  chordPatternsModelChanged(event: any) {
+    this.setLocalStorageOption('chordPatternsModel');
+    console.log(this.qualityOptionsModel);
+  }
+
+  chordPreviewCountChanged(event: any) {
+    this.setLocalStorageOption('chordPreviewCount');
+    console.log(this.chordPreviewCount);
+  }
+
+  tempoChanged(event: any) {
+    this.setLocalStorageOption('tempo');
+    console.log(this.tempo);
+  }
+
+  beatOptionsModelChanged(event: any) {
+    this.setLocalStorageOption('beatOptionsModel');
     this.noteResolution = Number(this.beatOptionsModel[0]);
     console.log(this.beatOptionsModel);
   }
 
-  measureIntervalChanged(event: any) {
+  measureIntervalOptionsModelChanged(event: any) {
+    this.setLocalStorageOption('measureIntervalOptionsModel');
     this.measureInterval = Number(this.selectedMeasureIntervalDict[this.measureIntervalOptionsModel[0]]);
     console.log(this.measureIntervalOptionsModel);
   }
@@ -199,16 +231,16 @@ export class ChordsComponent implements OnInit {
 
     this.startTime;              // The start time of the entire sequence.
     this.currentBeat = 0;        // What note is currently last scheduled?
-    this.tempo = 120;          // tempo (in beats per minute)
-    this.chordPreviewCount = 40;
+    this.tempo = this.getLocalStorageOption('tempo', 120);          // tempo (in beats per minute)
+    this.chordPreviewCount = this.getLocalStorageOption('chordPreviewCount', 40);
     this.lookahead = 25.0;       // How frequently to call scheduling function (in milliseconds)
     this.startStopMessage = "Play";
     this.scheduleAheadTime = 0.1;
     this.nextNoteTime = 0.0;     // when the next note is due.
     this.noteResolution = 2;     // 0 == 16th, 1 == 8th, 2 == quarter note
-    this.beatOptionsModel = [2];
+    this.beatOptionsModel = this.getLocalStorageOption('beatOptionsModel', [2]);
     this.measureInterval = 2;
-    this.measureIntervalOptionsModel = [2];
+    this.measureIntervalOptionsModel = this.getLocalStorageOption('this.getLocalStorageOption', [2]);
     this.measureIntervalCounter = 0;
     this.noteLength = 0.05;      // length of "beep" (in seconds)
     this.canvas;                 // the canvas element
