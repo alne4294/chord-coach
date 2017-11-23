@@ -193,10 +193,8 @@ export class ChordsComponent implements OnInit {
   /* How far ahead to schedule audio (sec). This is calculated from lookahead, and overlaps
    * with next interval (in case the timer is late) */
   scheduleAheadTime: number;
-  startTime: number;
   noteResolution: number;
   noteLength: number;
-  canvas: number;
   last16thNoteDrawn: number;
   notesInQueue: NoteObject[];//Array<Object>;
   current16thNote: number;
@@ -229,21 +227,22 @@ export class ChordsComponent implements OnInit {
     }
     this.audioContext = new AudioContext();
 
-    this.startTime;              // The start time of the entire sequence.
-    this.currentBeat = 0;        // What note is currently last scheduled?
+    // User options
     this.tempo = this.getLocalStorageOption('tempo', 120);          // tempo (in beats per minute)
     this.chordPreviewCount = this.getLocalStorageOption('chordPreviewCount', 40);
+    this.beatOptionsModel = this.getLocalStorageOption('beatOptionsModel', [2]);
+    this.measureIntervalOptionsModel = this.getLocalStorageOption('this.getLocalStorageOption', [2]);
+
+    // Constants
+    this.currentBeat = 0;        // What note is currently last scheduled?
     this.lookahead = 25.0;       // How frequently to call scheduling function (in milliseconds)
     this.startStopMessage = "Play";
     this.scheduleAheadTime = 0.1;
     this.nextNoteTime = 0.0;     // when the next note is due.
     this.noteResolution = 2;     // 0 == 16th, 1 == 8th, 2 == quarter note
-    this.beatOptionsModel = this.getLocalStorageOption('beatOptionsModel', [2]);
     this.measureInterval = 2;
-    this.measureIntervalOptionsModel = this.getLocalStorageOption('this.getLocalStorageOption', [2]);
     this.measureIntervalCounter = 0;
     this.noteLength = 0.05;      // length of "beep" (in seconds)
-    this.canvas;                 // the canvas element
     this.current16thNote = 0;
     this.last16thNoteDrawn = -1; // the last "box" we drew on the screen
     this.notesInQueue = [];      // the notes that have been put into the web audio and may or may not have played yet. {note, time}
@@ -265,7 +264,10 @@ export class ChordsComponent implements OnInit {
         console.error("Unexpected message: " + message);
       }
     });
+
     this.timerWorker.postMessage({"interval": this.lookahead});
+
+    requestAnimationFrame(this.draw.bind(this));
   }
 
   /**
@@ -327,14 +329,14 @@ export class ChordsComponent implements OnInit {
 
     this.isPlaying = !this.isPlaying;
 
-    if (this.isPlaying) { // start playing
+    if (this.isPlaying) { // Start
       this.populateChordQueue();
       this.currentBeat = 0;
       this.measureIntervalCounter = 0;
       this.nextNoteTime = this.audioContext.currentTime;
       this.startStopMessage = "Pause";
       this.timerWorker.postMessage("start");
-    } else {
+    } else { // Stop
       this.startStopMessage = "Play";
       this.timerWorker.postMessage("stop");
     }
@@ -345,8 +347,10 @@ export class ChordsComponent implements OnInit {
     this.populateChordQueue();
   }
 
+  /**
+   * Advance current note and time by a 16th note...
+   */
   nextNote(): void {
-    // Advance current note and time by a 16th note...
     var secondsPerBeat = 60.0 / this.tempo;    // Notice this picks up the CURRENT tempo value to calculate beat length.
     this.nextNoteTime += 0.25 * secondsPerBeat;    // Add beat length to last beat time
 
@@ -356,8 +360,10 @@ export class ChordsComponent implements OnInit {
     }
   }
 
+  /**
+   * push the note on the queue, even if we're not playing.
+   */
   scheduleNote(beatNumber: number, time: number): void {
-    // push the note on the queue, even if we're not playing.
     this.notesInQueue.push({note: beatNumber, time: time});
 
     if ((this.noteResolution === 1) && (beatNumber % 2))
@@ -402,21 +408,20 @@ export class ChordsComponent implements OnInit {
       osc.frequency.duration = .2;
     }
 
+    console.log(this.notesInQueue.length);
     osc.start(time);
     osc.stop(time + this.noteLength);
   }
 
+  /**
+   * while there are notes that will need to play before the next interval,
+   * schedule them and advance the pointer.
+   */
   scheduler(): void {
-    // while there are notes that will need to play before the next interval,
-    // schedule them and advance the pointer.
     while (this.nextNoteTime < this.audioContext.currentTime + this.scheduleAheadTime) {
-      this.scheduleNote(this.current16thNote, this.nextNoteTime);
-      this.nextNote();
+      this.scheduleNote(this.current16thNote, this.nextNoteTime); // add note to queue
+      this.nextNote(); // advance to the next note
     }
-  }
-
-  changeBeat(val: any): void {
-    debugger;
   }
 
   draw(): void {
@@ -431,7 +436,18 @@ export class ChordsComponent implements OnInit {
     // We only need to draw if the note has moved.
     if (this.last16thNoteDrawn !== currentNote) {
       this.last16thNoteDrawn = currentNote;
+      //    var x = Math.floor( canvas.width / 18 );
+//    canvasContext.clearRect(0,0,canvas.width, canvas.height);
+//    for (var i=0; i<16; i++) {
+//      canvasContext.fillStyle = ( currentNote == i ) ?
+//        ((currentNote%4 === 0)?"red":"blue") : "black";
+//      canvasContext.fillRect( x * (i+1), x, x/2, x/2 );
+//    }
+//    last16thNoteDrawn = currentNote;
     }
+
+    // TODO: use ES6 optimization: https://stackoverflow.com/questions/6065169/requestanimationframe-with-this-keyword
+    requestAnimationFrame(this.draw.bind(this));
   }
 }
 

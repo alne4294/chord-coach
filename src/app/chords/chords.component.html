@@ -1,5 +1,5 @@
 <div class="chords-main">
-<h2>Random Chords</h2>
+<h2 *ngIf="!isPlaying">Random Chords</h2>
 
 <ngb-alert *ngIf="showInfoAlert" type="light" [dismissible]="false">
     Select your options and press play!
@@ -52,7 +52,7 @@
             <div class="random-chord-selector">
               Measures Between Chord Change:
               <ss-multiselect-dropdown [options]="selectedMeasureInterval" [(ngModel)]="measureIntervalOptionsModel" (ngModelChange)="measureIntervalOptionsModelChanged($event)" [settings]="singleAnswerSettings"></ss-multiselect-dropdown>
-              <span>{{measureIntervalCounter}}/{{measureInterval}}</span>
+              <!--<span>{{measureIntervalCounter}}/{{measureInterval}}</span>-->
             </div>
         </div>
       </div>
