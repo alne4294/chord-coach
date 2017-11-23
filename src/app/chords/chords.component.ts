@@ -9,6 +9,7 @@ import { IMultiSelectOption } from 'angular-2-dropdown-multiselect';
 import { IMultiSelectSettings } from 'angular-2-dropdown-multiselect';
 
 import { ChordCalculatorService } from './chordCalculator.service';
+import { OptionsService } from './options.service';
 import { WindowRefService } from './windowRefService.service';
 
 interface NoteObject {
@@ -177,8 +178,9 @@ export class ChordsComponent implements OnInit {
 
   currentChordIndex: number;
   showInfoAlert: boolean;
+  options: object;
 
-  constructor(public fb: FormBuilder, private _metronomeWebWorker: MetronomeWebWorker, windowRef: WindowRefService, private _chordCalculator: ChordCalculatorService) {
+  constructor(public fb: FormBuilder, private _metronomeWebWorker: MetronomeWebWorker, windowRef: WindowRefService, private _chordCalculator: ChordCalculatorService, private optionsService: OptionsService) {
 
     this._window = windowRef.nativeWindow;
 
@@ -218,6 +220,7 @@ export class ChordsComponent implements OnInit {
 
     this.timerWorker = _metronomeWebWorker;
     this.chordCalculator = _chordCalculator;
+    this.options = optionsService.getOptions();
 
     this.chordQueue = [];
 
