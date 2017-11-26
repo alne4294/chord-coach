@@ -11,9 +11,8 @@ import { IMultiSelectSettings } from 'angular-2-dropdown-multiselect';
 import { ChordCalculatorService } from './chordCalculator.service';
 import { WindowRefService } from './windowRefService.service';
 
-interface NoteObject {
-  time: number;
-  note: number;
+interface MetronomeLightObject {
+  active: boolean;
 }
 
 /* This version of typescript doesn't recognize these components on the Window, so stub
@@ -22,6 +21,9 @@ declare global {
   interface Window {
     webkitAudioContext: any,
     AudioContext: any
+  }
+  interface HTMLElement {
+    animate: any
   }
 }
 
@@ -78,17 +80,13 @@ export class ChordsComponent implements OnInit {
     4: '8'
   };
 
-  localStorageOptions = {
-
-  };
-
   setLocalStorageOption(key: string): void {
     localStorage.setItem(key, JSON.stringify(this[key]));
   };
 
   getLocalStorageOption(key: string, defaultItem : any): any {
     let localStorageVal = JSON.parse(localStorage.getItem(key));
-    return localStorageVal ? localStorageVal : defaultItem;
+    return typeof localStorageVal !== "undefined" ? localStorageVal : defaultItem;
   };
 
   ngOnInit() {
@@ -180,6 +178,16 @@ export class ChordsComponent implements OnInit {
     console.log(this.measureIntervalOptionsModel);
   }
 
+  showMetronomeChanged(event: any) {
+    this.setLocalStorageOption('showMetronome');
+    console.log(this.showMetronome);
+  }
+
+  regenerateChordsOnLoopChanged(event: any) {
+    this.setLocalStorageOption('regenerateChordsOnLoop');
+    console.log(this.regenerateChordsOnLoop);
+  }
+
   startStopMessage: string;
   chordQueue: Array<Object>;
 
@@ -196,7 +204,6 @@ export class ChordsComponent implements OnInit {
   noteResolution: number;
   noteLength: number;
   last16thNoteDrawn: number;
-  notesInQueue: NoteObject[];//Array<Object>;
   current16thNote: number;
   timerWorker; // The Web Worker used to fire timer messages
   chordCalculator;
@@ -207,6 +214,10 @@ export class ChordsComponent implements OnInit {
 
   currentChordIndex: number;
   showInfoAlert: boolean;
+  metronomeLights: MetronomeLightObject[];
+  showMetronome: boolean;
+
+  regenerateChordsOnLoop: boolean;
 
   constructor(public fb: FormBuilder, private _metronomeWebWorker: MetronomeWebWorker, windowRef: WindowRefService, private _chordCalculator: ChordCalculatorService) {
 
@@ -231,7 +242,9 @@ export class ChordsComponent implements OnInit {
     this.tempo = this.getLocalStorageOption('tempo', 120);          // tempo (in beats per minute)
     this.chordPreviewCount = this.getLocalStorageOption('chordPreviewCount', 40);
     this.beatOptionsModel = this.getLocalStorageOption('beatOptionsModel', [2]);
-    this.measureIntervalOptionsModel = this.getLocalStorageOption('this.getLocalStorageOption', [2]);
+    this.measureIntervalOptionsModel = this.getLocalStorageOption('measureIntervalOptionsModel', [2]);
+    this.showMetronome = this.getLocalStorageOption('showMetronome', false);
+    this.regenerateChordsOnLoop = this.getLocalStorageOption('regenerateChordsOnLoop', true);
 
     // Constants
     this.currentBeat = 0;        // What note is currently last scheduled?
@@ -239,16 +252,17 @@ export class ChordsComponent implements OnInit {
     this.startStopMessage = "Play";
     this.scheduleAheadTime = 0.1;
     this.nextNoteTime = 0.0;     // when the next note is due.
-    this.noteResolution = 2;     // 0 == 16th, 1 == 8th, 2 == quarter note
-    this.measureInterval = 2;
+    this.noteResolution = Number(this.beatOptionsModel[0]); // 0 == 16th, 1 == 8th, 2 == quarter note
+    this.measureInterval = Number(this.selectedMeasureIntervalDict[this.measureIntervalOptionsModel[0]]);
     this.measureIntervalCounter = 0;
     this.noteLength = 0.05;      // length of "beep" (in seconds)
     this.current16thNote = 0;
     this.last16thNoteDrawn = -1; // the last "box" we drew on the screen
-    this.notesInQueue = [];      // the notes that have been put into the web audio and may or may not have played yet. {note, time}
 
     this.timerWorker = _metronomeWebWorker;
     this.chordCalculator = _chordCalculator;
+
+    this.initializeMetronomeLights();
 
     this.chordQueue = [];
 
@@ -267,7 +281,20 @@ export class ChordsComponent implements OnInit {
 
     this.timerWorker.postMessage({"interval": this.lookahead});
 
-    requestAnimationFrame(this.draw.bind(this));
+    // Stop metronome when leaving this page
+    self = this; // Is there a better way to do this?...
+    window.onbeforeunload = function(e) {
+      self.timerWorker.postMessage("stop");
+    };
+  }
+
+  // this could be better
+  initializeMetronomeLights(): void {
+    this.metronomeLights = [];
+    this.metronomeLights.push({active: true});
+    this.metronomeLights.push({active: false});
+    this.metronomeLights.push({active: false});
+    this.metronomeLights.push({active: false});
   }
 
   /**
@@ -332,7 +359,6 @@ export class ChordsComponent implements OnInit {
     if (this.isPlaying) { // Start
       this.populateChordQueue();
       this.currentBeat = 0;
-      this.measureIntervalCounter = 0;
       this.nextNoteTime = this.audioContext.currentTime;
       this.startStopMessage = "Pause";
       this.timerWorker.postMessage("start");
@@ -364,7 +390,21 @@ export class ChordsComponent implements OnInit {
    * push the note on the queue, even if we're not playing.
    */
   scheduleNote(beatNumber: number, time: number): void {
-    this.notesInQueue.push({note: beatNumber, time: time});
+    function isElementInViewport (el) {
+      var rect = el.getBoundingClientRect();
+
+      return (
+        rect.top >= 53 && // top nav is 53px
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight-50 || document.documentElement.clientHeight) && /*or $(window).height() - 50px footer */
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+      );
+    }
+
+    if (beatNumber % 4 === 0) {
+      // add next metronome light, regardless of what the note resolution is
+      this.metronomeLights[beatNumber / 4].active = true;
+    }
 
     if ((this.noteResolution === 1) && (beatNumber % 2))
       return; // we're not playing non-8th 16th notes
@@ -375,7 +415,6 @@ export class ChordsComponent implements OnInit {
     if ((this.noteResolution === 4) && (beatNumber % 16))
       return; // we're not playing non-whole notes
 
-
     // create an oscillator
     var osc = this.audioContext.createOscillator();
     osc.connect(this.audioContext.destination);
@@ -384,14 +423,25 @@ export class ChordsComponent implements OnInit {
       osc.frequency.value = 880.0;
       osc.frequency.duration = 1.0;
 
+      // just set the first metronome light
+      this.initializeMetronomeLights();
+
       if (this.measureIntervalCounter >= this.measureInterval) {
         //this.chordQueue.shift(); // Toss the first chord
         if (this.currentChordIndex === (this.chordQueue.length-1)) {
           // we've ran out of chords...
-          this.clearChordQueue();
-          this.populateChordQueue();
+          window.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
+          if (this.regenerateChordsOnLoop) {
+            this.scramble();
+          } else {
+            this.currentChordIndex = 0;
+          }
         } else {
           this.currentChordIndex++;
+          let elementIsInView = isElementInViewport(document.getElementById("chord-"+this.currentChordIndex));
+          if (!elementIsInView) {
+              document.getElementById("chord-"+this.currentChordIndex).scrollIntoView({block: 'center',  behavior: 'smooth'});
+          }
         }
 
         this.addRandomChordsFromSelections();
@@ -408,7 +458,6 @@ export class ChordsComponent implements OnInit {
       osc.frequency.duration = .2;
     }
 
-    console.log(this.notesInQueue.length);
     osc.start(time);
     osc.stop(time + this.noteLength);
   }
@@ -422,32 +471,6 @@ export class ChordsComponent implements OnInit {
       this.scheduleNote(this.current16thNote, this.nextNoteTime); // add note to queue
       this.nextNote(); // advance to the next note
     }
-  }
-
-  draw(): void {
-    var currentNote = this.last16thNoteDrawn;
-    var currentTime = this.audioContext.currentTime;
-
-    while (this.notesInQueue.length && this.notesInQueue[0].time < currentTime) {
-      currentNote = this.notesInQueue[0].note;
-      this.notesInQueue.splice(0, 1);   // remove note from queue
-    }
-
-    // We only need to draw if the note has moved.
-    if (this.last16thNoteDrawn !== currentNote) {
-      this.last16thNoteDrawn = currentNote;
-      //    var x = Math.floor( canvas.width / 18 );
-//    canvasContext.clearRect(0,0,canvas.width, canvas.height);
-//    for (var i=0; i<16; i++) {
-//      canvasContext.fillStyle = ( currentNote == i ) ?
-//        ((currentNote%4 === 0)?"red":"blue") : "black";
-//      canvasContext.fillRect( x * (i+1), x, x/2, x/2 );
-//    }
-//    last16thNoteDrawn = currentNote;
-    }
-
-    // TODO: use ES6 optimization: https://stackoverflow.com/questions/6065169/requestanimationframe-with-this-keyword
-    requestAnimationFrame(this.draw.bind(this));
   }
 }
 
