@@ -401,8 +401,8 @@ export class ChordsComponent implements OnInit {
 
     // documentElement neeeded for ios mobile: https://stackoverflow.com/questions/6942785/window-innerwidth-vs-document-documentelement-clientwidth
     function getBottomPosition() {
-      return window.innerWidth && document.documentElement.clientWidth ?
-        Math.min(window.innerWidth, document.documentElement.clientWidth) : window.innerWidth || document.documentElement.clientWidth;
+      return window.innerHeight && document.documentElement.clientHeight ?
+        Math.min(window.innerHeight, document.documentElement.clientHeight) : window.innerHeight || document.documentElement.clientHeight;
     }
 
     function getYValToScrollTo (el) { // https://stackoverflow.com/questions/123999/how-to-tell-if-a-dom-element-is-visible-in-the-current-viewport/7557433#7557433
