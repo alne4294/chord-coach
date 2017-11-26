@@ -33,7 +33,6 @@
   height: 52px;
   width: 128px;
   text-align: left;
-  /* background: rgba(211, 211, 211, 0.25); */
   padding-top: 5px;
   border-left: 1px solid #868e96;
   padding-left: 7px;
@@ -43,12 +42,7 @@
 }
 
 .highlighted-chord {
-  /*background-color: #FBF987;*/
   background-color: #faef96;
-
-  /*border-bottom: 1.5px solid #e6e47a;*/
-  /*border-top: 1.5px solid #e6e47a;*/
-  /*background-color: #f9eb0d94;*/
 }
 
 .last-chord-in-group {
@@ -131,8 +125,7 @@
 
   .current-chord {
     color: black;
-    /* background: rgba(211, 211, 211, 0.25); */
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 400;
     width: 84px;
     height: 38px;
