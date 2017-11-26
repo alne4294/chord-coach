@@ -14,6 +14,10 @@ import { WindowRefService } from './windowRefService.service';
 interface MetronomeLightObject {
   active: boolean;
 }
+interface NoteObject {
+  time: number;
+  note: number;
+}
 
 /* This version of typescript doesn't recognize these components on the Window, so stub
  * them in for now so that it compiles. */
@@ -190,6 +194,7 @@ export class ChordsComponent implements OnInit {
 
   startStopMessage: string;
   chordQueue: Array<Object>;
+  notesInQueue: NoteObject[];//Array<Object>;
 
   isPlaying: boolean;
   currentBeat: number;
@@ -218,6 +223,8 @@ export class ChordsComponent implements OnInit {
   showMetronome: boolean;
 
   regenerateChordsOnLoop: boolean;
+  height1: number;
+  height2: number;
 
   constructor(public fb: FormBuilder, private _metronomeWebWorker: MetronomeWebWorker, windowRef: WindowRefService, private _chordCalculator: ChordCalculatorService) {
 
@@ -265,6 +272,7 @@ export class ChordsComponent implements OnInit {
     this.initializeMetronomeLights();
 
     this.chordQueue = [];
+    this.notesInQueue = [];      // the notes that have been put into the web audio and may or may not have played yet. {note, time}
 
     this.currentChordIndex = 0;
     this.showInfoAlert = true;
@@ -285,6 +293,7 @@ export class ChordsComponent implements OnInit {
     self = this; // Is there a better way to do this?...
     window.onbeforeunload = function(e) {
       console.log("unloading");
+      self.isPlaying = false;
       self.timerWorker.postMessage("stop");
       return null;
     };
@@ -292,11 +301,7 @@ export class ChordsComponent implements OnInit {
 
   // this could be better
   initializeMetronomeLights(): void {
-    this.metronomeLights = [];
-    this.metronomeLights.push({active: true});
-    this.metronomeLights.push({active: false});
-    this.metronomeLights.push({active: false});
-    this.metronomeLights.push({active: false});
+    this.metronomeLights = [{active: true}, {active: false}, {active: false}, {active: false}];
   }
 
   /**
@@ -359,6 +364,7 @@ export class ChordsComponent implements OnInit {
 
     if (this.isPlaying) { // Start
       this.populateChordQueue();
+      requestAnimationFrame(this.draw.bind(this));
       this.currentBeat = 0;
       this.nextNoteTime = this.audioContext.currentTime;
       this.startStopMessage = "Pause";
@@ -391,12 +397,20 @@ export class ChordsComponent implements OnInit {
    * push the note on the queue, even if we're not playing.
    */
   scheduleNote(beatNumber: number, time: number): void {
-    function getYValToScrollTo (el) { //https://stackoverflow.com/questions/123999/how-to-tell-if-a-dom-element-is-visible-in-the-current-viewport/7557433#7557433
+    this.notesInQueue.push({note: beatNumber, time: time});
+
+    // documentElement neeeded for ios mobile: https://stackoverflow.com/questions/6942785/window-innerwidth-vs-document-documentelement-clientwidth
+    function getBottomPosition() {
+      return window.innerWidth && document.documentElement.clientWidth ?
+        Math.min(window.innerWidth, document.documentElement.clientWidth) : window.innerWidth || document.documentElement.clientWidth;
+    }
+
+    function getYValToScrollTo (el) { // https://stackoverflow.com/questions/123999/how-to-tell-if-a-dom-element-is-visible-in-the-current-viewport/7557433#7557433
       var rect = el.getBoundingClientRect();
 
       if (!(
           rect.top >= 53 && // top nav is 53px
-          rect.bottom <= (window.innerHeight-50 || document.documentElement.clientHeight)/*or $(window).height() - 50px footer */
+          rect.bottom <= getBottomPosition() - 50 /*or $(window).height(), 50px footer */
         )){
         return el.offsetTop - 55;
       } else {
@@ -478,6 +492,32 @@ export class ChordsComponent implements OnInit {
       this.scheduleNote(this.current16thNote, this.nextNoteTime); // add note to queue
       this.nextNote(); // advance to the next note
     }
+  }
+
+  /**
+   *  Using requestAnimationFrame recursively should allow us to reduce jitter by doing UI changes once the graphics is ready
+   *  https://medium.com/@heatherbooker/how-to-auto-scroll-to-the-bottom-of-a-div-415e967e7a24
+   */
+  draw(): void {
+    if (!this.isPlaying) {
+      return; // stop
+    }
+
+    var currentNote = this.last16thNoteDrawn;
+    var currentTime = this.audioContext.currentTime;
+
+    while (this.notesInQueue.length && this.notesInQueue[0].time < currentTime) {
+      currentNote = this.notesInQueue[0].note;
+      this.notesInQueue.splice(0, 1);   // remove note from queue
+    }
+
+    // We only need to draw if the note has moved.
+    if (this.last16thNoteDrawn !== currentNote) {
+      this.last16thNoteDrawn = currentNote;
+    }
+
+    // TODO: use ES6 optimization: https://stackoverflow.com/questions/6065169/requestanimationframe-with-this-keyword
+    requestAnimationFrame(this.draw.bind(this));
   }
 }
 
