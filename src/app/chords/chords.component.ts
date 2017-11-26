@@ -460,7 +460,7 @@ export class ChordsComponent implements OnInit {
           if (currentElement) { // if the page is unloading, this can be null
             let yValToScrollTo = getYValToScrollTo(currentElement);
             if (yValToScrollTo != null) { // if not already in view
-              setTimeout(function() {window.scrollTo({ left: 0, top: yValToScrollTo, behavior: 'smooth' });},100);
+              setTimeout(function() {window.scrollTo(0, yValToScrollTo);},100);
 
             }
           }
