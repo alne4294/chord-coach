@@ -86,7 +86,7 @@ export class ChordsComponent implements OnInit {
 
   getLocalStorageOption(key: string, defaultItem : any): any {
     let localStorageVal = JSON.parse(localStorage.getItem(key));
-    return typeof localStorageVal !== "undefined" ? localStorageVal : defaultItem;
+    return (typeof localStorageVal !== "undefined" && localStorageVal !== null) ? localStorageVal : defaultItem;
   };
 
   ngOnInit() {
@@ -284,7 +284,9 @@ export class ChordsComponent implements OnInit {
     // Stop metronome when leaving this page
     self = this; // Is there a better way to do this?...
     window.onbeforeunload = function(e) {
+      console.log("unloading");
       self.timerWorker.postMessage("stop");
+      return null;
     };
   }
 
@@ -319,7 +321,6 @@ export class ChordsComponent implements OnInit {
     }
 
     if (this.chordQueue.length >= this.chordPreviewCount) {
-      console.log("We have enough chords shown, returning");
       return;
     }
 
@@ -438,9 +439,12 @@ export class ChordsComponent implements OnInit {
           }
         } else {
           this.currentChordIndex++;
-          let elementIsInView = isElementInViewport(document.getElementById("chord-"+this.currentChordIndex));
-          if (!elementIsInView) {
+          let currentElement = document.getElementById("chord-"+this.currentChordIndex);
+          if (currentElement) { // if the page is unloading, this can be null
+            let elementIsInView = isElementInViewport(currentElement);
+            if (!elementIsInView) {
               document.getElementById("chord-"+this.currentChordIndex).scrollIntoView({block: 'center',  behavior: 'smooth'});
+            }
           }
         }
 
