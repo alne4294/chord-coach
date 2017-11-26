@@ -35,12 +35,6 @@
                 <input class="preview-count-slider" name="ram" type="range" min="1.0" max="120.0" step="1"  [(ngModel)]="chordPreviewCount" (ngModelChange)="chordPreviewCountChanged($event)">
               </div>
             </div>
-
-            <div class="random-chord-selector">
-              Generate new chords on loop:
-              <input type="checkbox" [(ngModel)]="regenerateChordsOnLoop" (ngModelChange)="regenerateChordsOnLoopChanged($event)">
-            </div>
-
           </div>
       </ng-template>
     </ngb-panel>
@@ -64,10 +58,34 @@
               <ss-multiselect-dropdown [options]="selectedMeasureInterval" [(ngModel)]="measureIntervalOptionsModel" (ngModelChange)="measureIntervalOptionsModelChanged($event)" [settings]="singleAnswerSettings"></ss-multiselect-dropdown>
             </div>
 
-            <div class="random-chord-selector">
-              Show metronome:
-              <input type="checkbox" [(ngModel)]="showMetronome" (ngModelChange)="showMetronomeChanged($event)">
+            <div class="switch-with-label">
+              <span>Show metronome</span>
+              <label class="switch">
+                <input type="checkbox" [(ngModel)]="showMetronome" (ngModelChange)="showMetronomeChanged($event)">
+                <span class="slider round"></span>
+              </label>
             </div>
+          </div>
+        </div>
+      </ng-template>
+    </ngb-panel>
+    <ngb-panel title="Playback Options">
+      <ng-template ngbPanelContent>
+        <div id="controls">
+          <div class="switch-with-label">
+              <span>Generate new chords on loop</span>
+              <label class="switch">
+                <input type="checkbox" [(ngModel)]="regenerateChordsOnLoop" (ngModelChange)="regenerateChordsOnLoopChanged($event)">
+                <span class="slider round"></span>
+              </label>
+          </div>
+
+          <div class="switch-with-label">
+            <span>Always scroll to active chord</span>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="scrollToActiveRow" (ngModelChange)="scrollToActiveRowChanged($event)">
+              <span class="slider round"></span>
+            </label>
           </div>
         </div>
       </ng-template>

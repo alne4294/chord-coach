@@ -192,6 +192,11 @@ export class ChordsComponent implements OnInit {
     console.log(this.regenerateChordsOnLoop);
   }
 
+  scrollToActiveRowChanged(event: any) {
+    this.setLocalStorageOption('scrollToActiveRow');
+    console.log(this.scrollToActiveRow);
+  }
+
   startStopMessage: string;
   chordQueue: Array<Object>;
   notesInQueue: NoteObject[];//Array<Object>;
@@ -223,8 +228,7 @@ export class ChordsComponent implements OnInit {
   showMetronome: boolean;
 
   regenerateChordsOnLoop: boolean;
-  height1: number;
-  height2: number;
+  scrollToActiveRow: boolean;
 
   constructor(public fb: FormBuilder, private _metronomeWebWorker: MetronomeWebWorker, windowRef: WindowRefService, private _chordCalculator: ChordCalculatorService) {
 
@@ -249,9 +253,10 @@ export class ChordsComponent implements OnInit {
     this.tempo = this.getLocalStorageOption('tempo', 120);          // tempo (in beats per minute)
     this.chordPreviewCount = this.getLocalStorageOption('chordPreviewCount', 40);
     this.beatOptionsModel = this.getLocalStorageOption('beatOptionsModel', [2]);
-    this.measureIntervalOptionsModel = this.getLocalStorageOption('measureIntervalOptionsModel', [2]);
+    this.measureIntervalOptionsModel = this.getLocalStorageOption('measureIntervalOptionsModel', [1]);
     this.showMetronome = this.getLocalStorageOption('showMetronome', false);
     this.regenerateChordsOnLoop = this.getLocalStorageOption('regenerateChordsOnLoop', true);
+    this.scrollToActiveRow = this.getLocalStorageOption('scrollToActiveRow', false);
 
     // Constants
     this.currentBeat = 0;        // What note is currently last scheduled?
@@ -401,17 +406,16 @@ export class ChordsComponent implements OnInit {
 
     // https://stackoverflow.com/questions/6942785/window-innerwidth-vs-document-documentelement-clientwidth
     function getBottomPosition() {
+      // or $(window).height()?
       return window.innerHeight && document.documentElement.clientHeight ?
         Math.min(window.innerHeight, document.documentElement.clientHeight) : window.innerHeight || document.documentElement.clientHeight;
     }
 
-    function getYValToScrollTo (el) { // https://stackoverflow.com/questions/123999/how-to-tell-if-a-dom-element-is-visible-in-the-current-viewport/7557433#7557433
+    function getYValToScrollTo (el, activeAlwaysAtTop) {
       var rect = el.getBoundingClientRect();
 
-      if (!(
-          rect.top >= 53 && // top nav is 53px
-          rect.bottom <= getBottomPosition() - 50 /*or $(window).height(), 50px footer */
-        )){
+      //top nav is 53px and footer is 50px
+      if (activeAlwaysAtTop || !(rect.top >= 53 && rect.bottom <= getBottomPosition() - 50)){
         return el.offsetTop - 55;
       } else {
         // in view
@@ -458,9 +462,10 @@ export class ChordsComponent implements OnInit {
           this.currentChordIndex++;
           let currentElement = document.getElementById("chord-"+this.currentChordIndex);
           if (currentElement) { // if the page is unloading, this can be null
-            let yValToScrollTo = getYValToScrollTo(currentElement);
+            let yValToScrollTo = getYValToScrollTo(currentElement, this.scrollToActiveRow);
             if (yValToScrollTo != null) { // if not already in view
-              setTimeout(function() {window.scrollTo(0, yValToScrollTo);},100);
+              // chrome mobile seems to need timeout and doesn't support behavior:smooth
+              setTimeout(function() {window.scrollTo(0, yValToScrollTo);},10);
 
             }
           }
