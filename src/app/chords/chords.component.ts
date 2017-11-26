@@ -399,7 +399,7 @@ export class ChordsComponent implements OnInit {
   scheduleNote(beatNumber: number, time: number): void {
     this.notesInQueue.push({note: beatNumber, time: time});
 
-    // documentElement neeeded for ios mobile: https://stackoverflow.com/questions/6942785/window-innerwidth-vs-document-documentelement-clientwidth
+    // https://stackoverflow.com/questions/6942785/window-innerwidth-vs-document-documentelement-clientwidth
     function getBottomPosition() {
       return window.innerHeight && document.documentElement.clientHeight ?
         Math.min(window.innerHeight, document.documentElement.clientHeight) : window.innerHeight || document.documentElement.clientHeight;
@@ -460,7 +460,8 @@ export class ChordsComponent implements OnInit {
           if (currentElement) { // if the page is unloading, this can be null
             let yValToScrollTo = getYValToScrollTo(currentElement);
             if (yValToScrollTo != null) { // if not already in view
-              window.scrollTo({ left: 0, top: yValToScrollTo, behavior: 'smooth' });
+              setTimeout(window.scrollTo({ left: 0, top: yValToScrollTo, behavior: 'smooth' }),100);
+
             }
           }
         }
