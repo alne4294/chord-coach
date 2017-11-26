@@ -391,15 +391,18 @@ export class ChordsComponent implements OnInit {
    * push the note on the queue, even if we're not playing.
    */
   scheduleNote(beatNumber: number, time: number): void {
-    function isElementInViewport (el) {
+    function getYValToScrollTo (el) { //https://stackoverflow.com/questions/123999/how-to-tell-if-a-dom-element-is-visible-in-the-current-viewport/7557433#7557433
       var rect = el.getBoundingClientRect();
 
-      return (
-        rect.top >= 53 && // top nav is 53px
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight-50 || document.documentElement.clientHeight) && /*or $(window).height() - 50px footer */
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
-      );
+      if (!(
+          rect.top >= 53 && // top nav is 53px
+          rect.bottom <= (window.innerHeight-50 || document.documentElement.clientHeight)/*or $(window).height() - 50px footer */
+        )){
+        return el.offsetTop - 55;
+      } else {
+        // in view
+        return null;
+      }
     }
 
     if (beatNumber % 4 === 0) {
@@ -441,9 +444,9 @@ export class ChordsComponent implements OnInit {
           this.currentChordIndex++;
           let currentElement = document.getElementById("chord-"+this.currentChordIndex);
           if (currentElement) { // if the page is unloading, this can be null
-            let elementIsInView = isElementInViewport(currentElement);
-            if (!elementIsInView) {
-              document.getElementById("chord-"+this.currentChordIndex).scrollIntoView({block: 'center',  behavior: 'smooth'});
+            let yValToScrollTo = getYValToScrollTo(currentElement);
+            if (yValToScrollTo != null) { // if not already in view
+              window.scrollTo({ left: 0, top: yValToScrollTo, behavior: 'smooth' });
             }
           }
         }
