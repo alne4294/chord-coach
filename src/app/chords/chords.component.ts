@@ -11,6 +11,12 @@ import { IMultiSelectSettings } from 'angular-2-dropdown-multiselect';
 import { ChordCalculatorService } from './chordCalculator.service';
 import { WindowRefService } from './windowRefService.service';
 
+var noSleep = new NoSleep();
+function enableNoSleep() {
+  noSleep.enable();
+  document.removeEventListener('click', enableNoSleep, false);
+}
+
 interface MetronomeLightObject {
   active: boolean;
 }
@@ -242,6 +248,10 @@ export class ChordsComponent implements OnInit {
       }
     };
 
+    //document.getElementById("startstop-button").addEventListener('click', enableNoSleep, false);
+    document.addEventListener('click', enableNoSleep, false);
+    //debugger;
+
     let AudioContext = this._window.AudioContext || this._window.webkitAudioContext;
     if (!AudioContext) {
       alert("Sorry, but the Web Audio API is not supported by your browser. Please, consider upgrading to the latest version or downloading Google Chrome or Mozilla Firefox");
@@ -295,11 +305,12 @@ export class ChordsComponent implements OnInit {
     this.timerWorker.postMessage({"interval": this.lookahead});
 
     // Stop metronome when leaving this page
-    self = this; // Is there a better way to do this?...
+    // Is there a better way to do this?...
     window.onbeforeunload = function(e) {
       console.log("unloading");
       self.isPlaying = false;
       self.timerWorker.postMessage("stop");
+      noSleep.disable();
       return null;
     };
   }
@@ -368,15 +379,20 @@ export class ChordsComponent implements OnInit {
     this.isPlaying = !this.isPlaying;
 
     if (this.isPlaying) { // Start
+      //noSleep.enable();
       this.populateChordQueue();
+      let self = this;
+      setTimeout(function() {self.scrollToCurrentChord();},1); // let digest cycle populate the DOM
       requestAnimationFrame(this.draw.bind(this));
       this.currentBeat = 0;
       this.nextNoteTime = this.audioContext.currentTime;
       this.startStopMessage = "Pause";
       this.timerWorker.postMessage("start");
     } else { // Stop
+      //noSleep.disable();
       this.startStopMessage = "Play";
       this.timerWorker.postMessage("stop");
+      this.scrollToTop();
     }
   }
 
@@ -398,12 +414,7 @@ export class ChordsComponent implements OnInit {
     }
   }
 
-  /**
-   * push the note on the queue, even if we're not playing.
-   */
-  scheduleNote(beatNumber: number, time: number): void {
-    this.notesInQueue.push({note: beatNumber, time: time});
-
+  scrollToCurrentChord(): void {
     // https://stackoverflow.com/questions/6942785/window-innerwidth-vs-document-documentelement-clientwidth
     function getBottomPosition() {
       // or $(window).height()?
@@ -416,12 +427,34 @@ export class ChordsComponent implements OnInit {
 
       //top nav is 53px and footer is 50px
       if (activeAlwaysAtTop || !(rect.top >= 53 && rect.bottom <= getBottomPosition() - 50)){
-        return el.offsetTop - 55;
+        return el.offsetTop - 60;
       } else {
         // in view
         return null;
       }
     }
+
+    let currentElement = document.getElementById("chord-" + this.currentChordIndex);
+    if (currentElement) { // if the page is unloading, this can be null
+      let yValToScrollTo = getYValToScrollTo(currentElement, this.scrollToActiveRow);
+      if (yValToScrollTo != null) { // if not already in view
+        // chrome mobile seems to need timeout and doesn't support behavior:smooth
+        setTimeout(function() {window.scrollTo(0, yValToScrollTo);},10);
+      }
+    } else {
+      console.log("currentElement not found for: " + "chord-" + this.currentChordIndex);
+    }
+  }
+
+  scrollToTop(): void {
+    window.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
+  }
+
+  /**
+   * push the note on the queue, even if we're not playing.
+   */
+  scheduleNote(beatNumber: number, time: number): void {
+    this.notesInQueue.push({note: beatNumber, time: time});
 
     if (beatNumber % 4 === 0) {
       // add next metronome light, regardless of what the note resolution is
@@ -452,7 +485,7 @@ export class ChordsComponent implements OnInit {
         //this.chordQueue.shift(); // Toss the first chord
         if (this.currentChordIndex === (this.chordQueue.length-1)) {
           // we've ran out of chords...
-          window.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
+          this.scrollToTop();
           if (this.regenerateChordsOnLoop) {
             this.scramble();
           } else {
@@ -460,15 +493,7 @@ export class ChordsComponent implements OnInit {
           }
         } else {
           this.currentChordIndex++;
-          let currentElement = document.getElementById("chord-"+this.currentChordIndex);
-          if (currentElement) { // if the page is unloading, this can be null
-            let yValToScrollTo = getYValToScrollTo(currentElement, this.scrollToActiveRow);
-            if (yValToScrollTo != null) { // if not already in view
-              // chrome mobile seems to need timeout and doesn't support behavior:smooth
-              setTimeout(function() {window.scrollTo(0, yValToScrollTo);},10);
-
-            }
-          }
+          this.scrollToCurrentChord();
         }
 
         this.addRandomChordsFromSelections();

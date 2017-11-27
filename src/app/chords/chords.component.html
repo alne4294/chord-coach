@@ -1,7 +1,7 @@
 <div class="chords-main">
   <h2 *ngIf="!isPlaying">Chord Generator</h2>
 
-  <div *ngIf="isPlaying && showMetronome" class="metronome-container">
+  <div *ngIf="showMetronome" class="metronome-container">
     <div *ngFor="let dot of metronomeLights" class="met-beat" [ngClass]="{'active-met-beat': dot.active}"></div>
     <span class="measure-counter">{{measureIntervalCounter}}/{{measureInterval}}</span>
   </div>
