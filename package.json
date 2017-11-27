@@ -54,7 +54,7 @@
     "jsonwebtoken": "^7.3.0",
     "ngrx-store-freeze": "^0.1.9",
     "normalize.css": "^5.0.0",
-    "nosleep.js": "^0.7.0",
+    "nosleep.js": "https://github.com/alne4294/NoSleep.js/tarball/e40172a14a77ef5ef6d59a0120b361a770ba1495",
     "path": "^0.12.7",
     "rxjs": "^5.4.2",
     "ts-helpers": "^1.1.2",

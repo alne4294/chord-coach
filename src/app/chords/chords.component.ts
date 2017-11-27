@@ -379,7 +379,7 @@ export class ChordsComponent implements OnInit {
     this.isPlaying = !this.isPlaying;
 
     if (this.isPlaying) { // Start
-      //noSleep.enable();
+      noSleep.enable();
       this.populateChordQueue();
       let self = this;
       setTimeout(function() {self.scrollToCurrentChord();},1); // let digest cycle populate the DOM
@@ -389,7 +389,7 @@ export class ChordsComponent implements OnInit {
       this.startStopMessage = "Pause";
       this.timerWorker.postMessage("start");
     } else { // Stop
-      //noSleep.disable();
+      noSleep.disable();
       this.startStopMessage = "Play";
       this.timerWorker.postMessage("stop");
       this.scrollToTop();
@@ -485,12 +485,13 @@ export class ChordsComponent implements OnInit {
         //this.chordQueue.shift(); // Toss the first chord
         if (this.currentChordIndex === (this.chordQueue.length-1)) {
           // we've ran out of chords...
-          this.scrollToTop();
           if (this.regenerateChordsOnLoop) {
             this.scramble();
           } else {
             this.currentChordIndex = 0;
           }
+          let self = this;
+          setTimeout(function() {self.scrollToCurrentChord();},1); // let digest cycle populate the DOM
         } else {
           this.currentChordIndex++;
           this.scrollToCurrentChord();
