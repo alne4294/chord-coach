@@ -132,7 +132,12 @@ export class ChordsComponent implements OnInit {
       {id: 'major25', name: this.chordCalculator.chordPattern['major25'].name},
       {id: 'minor25', name: this.chordCalculator.chordPattern['minor25'].name},
       {id: 'major251', name: this.chordCalculator.chordPattern['major251'].name},
-      {id: 'minor251', name: this.chordCalculator.chordPattern['minor251'].name}
+      {id: 'minor251', name: this.chordCalculator.chordPattern['minor251'].name},
+      {id: 'diatonic1625', name: this.chordCalculator.chordPattern['diatonic1625'].name},
+      {id: 'nondiatonic1625_1', name: this.chordCalculator.chordPattern['nondiatonic1625_1'].name},
+      {id: 'nondiatonic1625_2', name: this.chordCalculator.chordPattern['nondiatonic1625_2'].name},
+      {id: 'chordcycle_1', name: this.chordCalculator.chordPattern['chordcycle_1'].name},
+      {id: 'chordcycle_2', name: this.chordCalculator.chordPattern['chordcycle_2'].name}
     ];
 
     this.selectedBeat = [
@@ -163,7 +168,7 @@ export class ChordsComponent implements OnInit {
 
   chordPatternsModelChanged(event: any) {
     this.setLocalStorageOption('chordPatternsModel');
-    console.log(this.qualityOptionsModel);
+    console.log(this.chordPatternsModel);
   }
 
   chordPreviewCountChanged(event: any) {

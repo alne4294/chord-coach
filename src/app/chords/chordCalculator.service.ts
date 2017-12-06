@@ -383,6 +383,148 @@ export class ChordCalculatorService {
           quality: '7'
         }
       ]
+    },
+    diatonic1625: {
+      name: "Major Diatonic Turnaround I-vi-ii-V7",
+      scaleQuality: "major",
+      pattern: [
+        {
+          halfStepsFromRoot: '0',
+          quality: 'ma7'
+        },
+        {
+          halfStepsFromRoot: '9',
+          quality: 'mi7'
+        },
+        {
+          halfStepsFromRoot: '2',
+          quality: 'mi7'
+        },
+        {
+          halfStepsFromRoot: '7',
+          quality: '7'
+        }
+      ]
+    },
+    nondiatonic1625_1: {
+      name: "Major Non-Diatonic Turnaround I-VI7-II7-V7",
+      scaleQuality: "major",
+      pattern: [
+        {
+          halfStepsFromRoot: '0',
+          quality: 'ma7'
+        },
+        {
+          halfStepsFromRoot: '9',
+          quality: '7'
+        },
+        {
+          halfStepsFromRoot: '2',
+          quality: '7'
+        },
+        {
+          halfStepsFromRoot: '7',
+          quality: '7'
+        }
+      ]
+    },
+    nondiatonic1625_2: {
+      name: "Major Non-Diatonic Turnaround I7-VI7-II7-V7",
+      scaleQuality: "major",
+      pattern: [
+        {
+          halfStepsFromRoot: '0',
+          quality: '7'
+        },
+        {
+          halfStepsFromRoot: '9',
+          quality: '7'
+        },
+        {
+          halfStepsFromRoot: '2',
+          quality: '7'
+        },
+        {
+          halfStepsFromRoot: '7',
+          quality: '7'
+        }
+      ]
+    },
+    chordcycle_1: {
+      name: "Diatonic Chord Cycle",
+      scaleQuality: "major",
+      pattern: [
+        {
+          halfStepsFromRoot: '0',
+          quality: 'ma7'
+        },
+        {
+          halfStepsFromRoot: '5', // 4th
+          quality: 'ma7'
+        },
+        {
+          halfStepsFromRoot: '4', // maj 3rd
+          quality: 'mi7'
+        },
+        {
+          halfStepsFromRoot: '9', // 6th
+          quality: 'mi7b5'
+        },
+        {
+          halfStepsFromRoot: '2',
+          quality: 'mi7'
+        },
+        {
+          halfStepsFromRoot: '7', // flat 6th
+          quality: '7'
+        },
+        {
+          halfStepsFromRoot: '0',
+          quality: 'ma7'
+        },
+        {
+          halfStepsFromRoot: '0', // repeat
+          quality: 'ma7'
+        }
+      ]
+    },
+    chordcycle_2: {
+      name: "Chord Cycle with VI7",
+      scaleQuality: "major",
+      pattern: [
+        {
+          halfStepsFromRoot: '0',
+          quality: 'ma7'
+        },
+        {
+          halfStepsFromRoot: '5', // 4th
+          quality: 'ma7'
+        },
+        {
+          halfStepsFromRoot: '4', // maj 3rd
+          quality: 'mi7'
+        },
+        {
+          halfStepsFromRoot: '9', // 6th
+          quality: '7'
+        },
+        {
+          halfStepsFromRoot: '2',
+          quality: 'mi7'
+        },
+        {
+          halfStepsFromRoot: '7', // flat 6th
+          quality: '7'
+        },
+        {
+          halfStepsFromRoot: '0',
+          quality: 'ma7'
+        },
+        {
+          halfStepsFromRoot: '0', // repeat
+          quality: 'ma7'
+        }
+      ]
     }
   };
 
