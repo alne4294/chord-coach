@@ -69,6 +69,13 @@ export class ChordsComponent implements OnInit {
     dynamicTitleMaxItems: 8
   };
 
+  multiAnswerSettingsLongNames: IMultiSelectSettings = {
+    displayAllSelectedText: true,
+    showCheckAll: true,
+    showUncheckAll: true,
+    dynamicTitleMaxItems: 1
+  };
+
   singleAnswerSettings: IMultiSelectSettings = {
     selectionLimit: 1,
     autoUnselect: true,
