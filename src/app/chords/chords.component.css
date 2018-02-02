@@ -10,12 +10,65 @@
   width: 100%;
 }
 
+.chord-select-container{
+  height: 108px;
+  width: 300px;
+}
+
 .control-button {
   width: 140px;
   height: 36px;
   margin: 5px;
   background-color: #035eb6;
   border-color: #035eb6;
+}
+
+.add-active-pattern-list-item {
+  float: left;
+  width: 38px;
+  height: 38px;
+  background-color: #3aa753;
+  font-size: large;
+  color: white;
+  border-radius: 2rem;
+}
+
+.chord-note-button {
+  width: 71px;
+  height: 46px;
+  margin: 2px;
+  color: #f5f1f1e6;
+  background-color: #004085a1;
+  border-color: #21252966;
+  float: left;
+  border-width: thin;
+  font-size: larger;
+}
+
+.pattern-list-container {
+  width: 300px;
+  height: 44px;
+}
+
+.pattern-list {
+  margin: 8px;
+  float: left;
+  background-color: #e9ecef;
+}
+
+.active-pattern-list-item {
+  float: left;
+  margin: 5px;
+}
+
+.remove-pattern-list {
+  float: left;
+  width: 38px;
+  height: 38px;
+  background-color: #ce2f2f;
+  font-size: large;
+  color: white;
+  border-radius: 2rem;
 }
 
 .chord-display {
