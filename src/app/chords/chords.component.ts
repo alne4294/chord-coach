@@ -24,6 +24,13 @@ interface NoteObject {
   time: number;
   note: number;
 }
+interface Chord {
+  halfStepsFromRoot: number,
+  quality: string,
+  name: {
+    romanNumeral: string
+  }
+}
 
 /* This version of typescript doesn't recognize these components on the Window, so stub
  * them in for now so that it compiles. */
@@ -53,6 +60,7 @@ export class ChordsComponent implements OnInit {
   selectedQuality: IMultiSelectOption[];
 
   chordPatternsModel: string[];
+  userChordPatterns: string[];
   selectedChordPattern: IMultiSelectOption[];
 
   beatOptionsModel: number[];
@@ -110,6 +118,7 @@ export class ChordsComponent implements OnInit {
     this.chordOptionsModel = this.getLocalStorageOption('chordOptionsModel', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
     this.qualityOptionsModel = this.getLocalStorageOption('qualityOptionsModel', ['dim7', 'mi7', 'mi7b5', 'ma7', '7']);
     this.chordPatternsModel = this.getLocalStorageOption('chordPatternsModel', ['singleChord', 'major25', 'minor25', 'major251', 'minor251']);
+    this.userChordPatterns = []; // TODO add local storage
 
     this.selectedChords = [
       {id: 0, name: this.chordCalculator.noteInfo[0].menuName},
@@ -215,10 +224,16 @@ export class ChordsComponent implements OnInit {
     console.log(this.scrollToActiveRow);
   }
 
+  // --------------------------------------------
   startStopMessage: string;
   chordQueue: Array<Object>;
   notesInQueue: NoteObject[];//Array<Object>;
 
+  // --------------------------------------------
+  activeCustomPattern: Array<Chord>;
+  customPatternChordsOptions: Array<Object>;
+
+  // --------------------------------------------
   isPlaying: boolean;
   currentBeat: number;
   audioContext;
@@ -299,6 +314,9 @@ export class ChordsComponent implements OnInit {
     this.initializeMetronomeLights();
 
     this.chordQueue = [];
+    this.activeCustomPattern = [];
+    // this.customPatternChordsOptions = [{name:"A"}, {name:"Bb"}, {name:"B"}, {name:"C"}, {name:"Db"}, {name:"D"}, {name:"Eb"}, {name:"E"}, {name:"F"}, {name:"Gb"}, {name:"G"}, {name:"Ab"}];
+    this.customPatternChordsOptions = this.chordCalculator.getScalePattern("major");
     this.notesInQueue = [];      // the notes that have been put into the web audio and may or may not have played yet. {note, time}
 
     this.currentChordIndex = 0;
@@ -332,6 +350,17 @@ export class ChordsComponent implements OnInit {
     this.metronomeLights = [{active: true}, {active: false}, {active: false}, {active: false}];
   }
 
+  getRandomPattern(): string {
+    let totalLength = this.chordPatternsModel.length + this.userChordPatterns.length;
+    let randomNumber = Math.floor((Math.random() * totalLength - 1) + 1);
+
+    if (randomNumber < this.chordPatternsModel.length) {
+      return this.chordPatternsModel[randomNumber];
+    } else {
+      return this.userChordPatterns[randomNumber - this.chordPatternsModel.length]
+    }
+  }
+
   /**
    * 1. Get random pattern from available selection
    * 2. If Single Chord, get random quality from available selection
@@ -359,7 +388,7 @@ export class ChordsComponent implements OnInit {
 
     // loop until we find a different random chord than th latest or our retries exceed max retries
     while (newChordKey === this.latestChordKey && retryCount < retryMax) {
-      patternKey = this.chordPatternsModel[Math.floor((Math.random() * this.chordPatternsModel.length - 1) + 1)];
+      patternKey = this.getRandomPattern();
       rootKey = this.chordOptionsModel[Math.floor((Math.random() * this.chordOptionsModel.length - 1) + 1)];
       qualityKey = "";
       if (patternKey === 'singleChord') {
@@ -408,6 +437,59 @@ export class ChordsComponent implements OnInit {
     }
   }
 
+  // --------------------------------------------
+  removeCustomPattern(customPatternKey: string): void {
+    console.log("Removing: " + JSON.stringify(customPatternKey));
+    for (let pattern of this.userChordPatterns) {
+      let counter = 0;
+      if (pattern === customPatternKey) {
+        this.userChordPatterns.splice(counter, 1);
+        break;
+      }
+      counter++;
+    }
+    this.chordCalculator.removeUserChordPattern(customPatternKey)
+  }
+
+  getCustomPatternName(key: string): string {
+    return this.chordCalculator.userChordPattern[key] ? this.chordCalculator.userChordPattern[key].name : "";
+  }
+
+  getUserPatternName(): string {
+    let name = "";
+    for (let chord of this.activeCustomPattern) {
+      name = name + " " + chord.name.romanNumeral;
+    }
+    return name;
+  }
+
+  addActiveCustomPattern(): void { 
+    let userPatternName = this.getUserPatternName();
+    let userPatternKey = "UP_" + Math.floor((Math.random() * 100) + 1);
+    let userPattern = {
+      id: userPatternKey,
+      name: userPatternName,
+      source: "user",
+      scaleQuality: "major",
+      pattern: this.activeCustomPattern
+    }
+
+    this.chordCalculator.addUserChordPattern(userPatternKey, userPattern);
+    this.userChordPatterns.push(userPatternKey);
+
+    this.activeCustomPattern = [];
+  }
+
+  addChordToActiveCustomPattern(chordVal: Chord): void {
+    console.log("adding: " + JSON.stringify(chordVal));
+    this.activeCustomPattern.push(chordVal);
+  }
+
+  removeChordFromActiveCustomPattern(chordVal: String): void {
+    console.log("removing: " + JSON.stringify(chordVal))
+  }
+
+  // --------------------------------------------
   scramble(): void {
     this.clearChordQueue();
     this.populateChordQueue();
