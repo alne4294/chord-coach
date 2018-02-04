@@ -4,6 +4,7 @@ ul.topnav {
   padding: 0;
   overflow: hidden;
   background-color: #868e96;
+  /* background: linear-gradient(to bottom right, #868e96, #d2d5d8); */
   position: fixed;
   width: 100%;
   z-index: 1;

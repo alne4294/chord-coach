@@ -1,11 +1,79 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 
+interface Chord {
+  halfStepsFromRoot: number,
+  quality: string
+}
+
+interface ChordPatternObject {
+  pattern: Chord[],
+  name: string,
+  scaleQuality: string;
+}
+
 /**
  * This class provides chords and chord groupings
  */
 @Injectable()
 export class ChordCalculatorService {
+
+  scales = {
+    major: {
+      name: "Major",
+      pattern: [
+        {
+          quality: "ma7",
+          name: {
+            romanNumeral: "I"
+          },
+          halfStepsFromRoot: 0
+        },
+        {
+          quality: "mi7",
+          name: {
+            romanNumeral: "ii"
+          },
+          halfStepsFromRoot: 2
+        },
+        {
+          quality: "mi7",
+          name: {
+            romanNumeral: "iii"
+          },
+          halfStepsFromRoot: 4
+        },
+        {
+          quality: "ma7",
+          name: {
+            romanNumeral: "IV"
+          },
+          halfStepsFromRoot: 5
+        },
+        {
+          quality: "7",
+          name: {
+            romanNumeral: "V"
+          },
+          halfStepsFromRoot: 7
+        },
+        {
+          quality: "mi7",
+          name: {
+            romanNumeral: "vi"
+          },
+          halfStepsFromRoot: 9
+        },
+        {
+          quality: "dim7",
+          name: {
+            romanNumeral: "vii dim"
+          },
+          halfStepsFromRoot: 11
+        }
+      ]
+    }
+  }
 
   noteInfo = {
     0: {
@@ -237,6 +305,10 @@ export class ChordCalculatorService {
       name: 'Enharmonic',
       halfSteps: 0
     },
+    1: {
+      name: 'Minor Second',
+      halfSteps: 1
+    },
     2: {
       name: 'Second',
       halfSteps: 2
@@ -249,9 +321,37 @@ export class ChordCalculatorService {
       name: 'Major 3rd',
       halfSteps: 4
     },
+    5: {
+      name: 'Perfect 4th',
+      halfSteps: 5
+    },
+    6: {
+      name: 'Sharp 4th',
+      halfSteps: 6
+    },
     7: {
       name: 'Perfect 5th',
       halfSteps: 7
+    },
+    8: {
+      name: 'Perfect 5th',
+      halfSteps: 8
+    },
+    9: {
+      name: 'Perfect 5th',
+      halfSteps: 9
+    },
+    10: {
+      name: 'Perfect 5th',
+      halfSteps: 10
+    },
+    11: {
+      name: 'Perfect 5th',
+      halfSteps: 11
+    },
+    12: {
+      name: 'Perfect 5th',
+      halfSteps: 12
     }
   };
 
@@ -302,9 +402,12 @@ export class ChordCalculatorService {
 
   repeatChordName = "%";
 
+  userChordPattern = {};
+
   chordPattern = {
     singleChord: {
       name: "Single Chord",
+      source: "computer",
       pattern: [
         {
           halfStepsFromRoot: '0',
@@ -314,6 +417,7 @@ export class ChordCalculatorService {
     },
     major251: {
       name: "Major ii-V7-I",
+      source: "computer",
       scaleQuality: "major",
       pattern: [
         {
@@ -336,6 +440,7 @@ export class ChordCalculatorService {
     },
     major25: {
       name: "Major ii-V7",
+      source: "computer",
       scaleQuality: "major",
       pattern: [
         {
@@ -350,6 +455,7 @@ export class ChordCalculatorService {
     },
     minor251: {
       name: "Minor ii-V7-i",
+      source: "computer",
       scaleQuality: "minor",
       pattern: [
         {
@@ -372,6 +478,7 @@ export class ChordCalculatorService {
     },
     minor25: {
       name: "Minor ii-V7",
+      source: "computer",
       scaleQuality: "minor",
       pattern: [
         {
@@ -386,6 +493,7 @@ export class ChordCalculatorService {
     },
     diatonic1625: {
       name: "Major Diatonic Turnaround I-vi-ii-V7",
+      source: "computer",
       scaleQuality: "major",
       pattern: [
         {
@@ -408,6 +516,7 @@ export class ChordCalculatorService {
     },
     nondiatonic1625_1: {
       name: "Major Non-Diatonic Turnaround I-VI7-II7-V7",
+      source: "computer",
       scaleQuality: "major",
       pattern: [
         {
@@ -430,6 +539,7 @@ export class ChordCalculatorService {
     },
     nondiatonic1625_2: {
       name: "Major Non-Diatonic Turnaround I7-VI7-II7-V7",
+      source: "computer",
       scaleQuality: "major",
       pattern: [
         {
@@ -452,6 +562,7 @@ export class ChordCalculatorService {
     },
     chordcycle_1: {
       name: "Diatonic Chord Cycle",
+      source: "computer",
       scaleQuality: "major",
       pattern: [
         {
@@ -490,6 +601,7 @@ export class ChordCalculatorService {
     },
     chordcycle_2: {
       name: "Chord Cycle with VI7",
+      source: "computer",
       scaleQuality: "major",
       pattern: [
         {
@@ -530,6 +642,10 @@ export class ChordCalculatorService {
 
   constructor() {}
 
+  getScalePattern(type: string): Object {
+    return this.scales[type].pattern;
+  }
+
   getHalfSteps(intervalName: string) {
     return this.intervals[this.intervalNameDict[intervalName]].halfSteps;
   }
@@ -565,17 +681,27 @@ export class ChordCalculatorService {
     return rootName + " " + qualityName;
   }
 
+  getChordPattern(patternKey: string): ChordPatternObject {
+    if (this.chordPattern[patternKey]) {
+      return this.chordPattern[patternKey]
+    } else if (this.userChordPattern[patternKey]) {
+      return this.userChordPattern[patternKey];
+    } else {
+      throw "NOT FOUND";
+    }
+  }
+
   appendChordPattern(chordQueue: Array<Object>, patternKey: string, rootKey: string): void {
-    let scaleQuality = this.chordPattern[patternKey].scaleQuality;
+    let scaleQuality = this.getChordPattern(patternKey).scaleQuality;
     let sharpOrFlat = this.getSharpOrFlatForScaleQuality(scaleQuality, rootKey);
 
     let previousChordAndQuality = "";
     let counter = 1;
-    for (let chord of this.chordPattern[patternKey].pattern) {
+    for (let chord of this.getChordPattern(patternKey).pattern) {
       let rootOfNextChord = this.noteInfo[this.noteInfo[rootKey].interval[chord.halfStepsFromRoot]].name[sharpOrFlat];
       let qualityOfNextChord = this.chordQuality[chord.quality].name;
 
-      let isLastInGroup = (counter === this.chordPattern[patternKey].pattern.length);
+      let isLastInGroup = (counter === this.getChordPattern(patternKey).pattern.length);
 
       let fullName = rootOfNextChord + " " + qualityOfNextChord;
       if (fullName === previousChordAndQuality) {
@@ -593,6 +719,14 @@ export class ChordCalculatorService {
     } else {
       this.appendChordPattern(chordQueue, patternKey, rootKey)
     }
+  }
+
+  addUserChordPattern(patternKey: string, patternVal: Object) {
+    this.userChordPattern[patternKey] = patternVal;
+  }
+
+  removeUserChordPattern(patternKey: string) {
+    delete this.userChordPattern[patternKey];
   }
 }
 
