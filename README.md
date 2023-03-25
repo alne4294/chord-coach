@@ -3,11 +3,12 @@ To run:
 
 If you have nvm:
 ```
-nvm use 6
+nvm use 8
 ```
 
 Then:
 ```
+npm install
 npm run start
 ```
 
