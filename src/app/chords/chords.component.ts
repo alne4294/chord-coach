@@ -463,7 +463,7 @@ export class ChordsComponent implements OnInit {
     return name;
   }
 
-  addActiveCustomPattern(): void { 
+  addActiveCustomPattern(): void {
     let userPatternName = this.getUserPatternName();
     let userPatternKey = "UP_" + Math.floor((Math.random() * 100) + 1);
     let userPattern = {

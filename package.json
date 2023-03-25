@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Coach for jazz",
   "main": "server/app.js",
-  "license": "MIT",
+  "license": "Apache License Version 2.0",
   "engines": {
     "node": "8.9.2"
   },
@@ -66,7 +66,7 @@
     "ts-helpers": "^1.1.2",
     "ts-node": "~3.3.0",
     "tslint": "^5.0.0",
-    "typescript": "^2.3.4",
+    "typescript": "~2.6.0",
     "uuid": "^3.0.1",
     "zone.js": "^0.8.14"
   },
